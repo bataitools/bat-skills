@@ -41,6 +41,21 @@ ln -s /path/to/bat-skills/skills/bat-submit .cursor/skills/bat-submit
 
 ---
 
+## How to Use
+
+Once the skill is installed in your project, it will be automatically loaded by your AI coding assistant (such as Cursor, Claude Code, Cline, or Gemini). You can trigger it in your chat using natural language.
+
+### Triggering the Skill
+
+Simply ask your AI assistant to submit or list a website. For example:
+- *"Submit AI tool https://example.com to bataitools"*
+- *"提交 AI 工具 https://example.com 到 bataitools"*
+- *"Run bat-cli submit for https://example.com"*
+
+The AI agent will automatically detect the trigger, load the workflow defined in `SKILL.md`, and execute the 4-step process (extract metadata, capture assets, translate, and package submit) autonomously.
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.

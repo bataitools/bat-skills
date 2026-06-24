@@ -4,10 +4,12 @@ description: Submit an AI tool to BAT AI Tools (bataitools.com) via bat-cli CLI.
 agent_created: true
 triggers:
     - submit AI tool to bataitools
-    - bat-cli submit
-    - 提交 AI 工具到 bataitools
+    - submit AI tool to bat ai tools
     - publish to BAT AI Tools directory
     - add tool to bataitools.com
+    - bat-cli submit
+    - 提交 AI 工具到 bataitools
+    - 提交 AI 工具到 bat
 ---
 
 # BAT AI Tools — Submit Skill
@@ -40,12 +42,12 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
 
 Large single-file JSON causes truncation and validation failures. Always run the 4 steps back-to-back:
 
-| Step | What happens | Output |
-| --- | --- | --- |
-| **1. Extract** | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json` |
-| **2. Capture** | Capture screenshot & fetch logo, validate Phase 1 | local logo & screenshot, validation check |
-| **3. Translate** | Translate `en.json` into 27 other languages (batches) | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
-| **4. Submit** | Merge, final validate, upload assets, POST | `submit.bundle.json`, submission confirmed |
+| Step             | What happens                                              | Output                                       |
+| ---------------- | --------------------------------------------------------- | -------------------------------------------- |
+| **1. Extract**   | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json`                  |
+| **2. Capture**   | Capture screenshot & fetch logo, validate Phase 1         | local logo & screenshot, validation check    |
+| **3. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
+| **4. Submit**    | Merge, final validate, upload assets, POST                | `submit.bundle.json`, submission confirmed   |
 
 ---
 
@@ -77,13 +79,13 @@ See `references/01-generate-en.md` for the complete crawl checklist, field guide
 **Steps:**
 
 1. Initialize directory and fetch schema:
-   ```bash
-   bat-cli init-site --website <url>
-   bat-cli schema en
-   ```
+    ```bash
+    bat-cli init-site --website <url>
+    bat-cli schema en
+    ```
 2. Crawl and write metadata files:
-   - `<submit-dir>/base.json` — shared metadata (links, social, developer identity, taxonomy)
-   - `<submit-dir>/i18n/en.json` — English text fields only
+    - `<submit-dir>/base.json` — shared metadata (links, social, developer identity, taxonomy)
+    - `<submit-dir>/i18n/en.json` — English text fields only
 
 **Semantic Self-Check:**
 AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in `references/01-generate-en.md`. Do not execute screenshot tools yet.
@@ -105,14 +107,14 @@ Once Step 1 text files are ready, grab the visual assets and execute validation.
 **Steps:**
 
 1. Capture and fetch assets:
-   ```bash
-   bat-cli capture-screenshot --website <url> --dir <submit-dir>
-   bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
-   ```
+    ```bash
+    bat-cli capture-screenshot --website <url> --dir <submit-dir>
+    bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
+    ```
 2. Execute validation:
-   ```bash
-   bat-cli validate-phase1 <submit-dir>
-   ```
+    ```bash
+    bat-cli validate-phase1 <submit-dir>
+    ```
 
 **Fail-Fast Rule:**
 If `validate-phase1` fails (Exit Code != 0), **stop the workflow immediately** and report the errors to the user. Do **not** proceed to Step 3, avoiding wasteful LLM translation calls.
@@ -142,7 +144,6 @@ All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl t
 2. **Translate template placeholders**:
    The AI agent reads these 27 translation template files, replaces the placeholders containing `[TODO: TRANSLATE]` with translations in the respective language, and writes them back.
    It is recommended to translate in batches of 3–4 languages per LLM call in the following order:
-
     1. `zh`, `tw`, `ja`, `ko`
     2. `de`, `fr`, `it`, `nl`
     3. `es`, `pt`, `vi`, `id`
