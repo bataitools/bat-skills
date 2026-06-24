@@ -69,7 +69,8 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 	"productMedia": [
 		{
 			"type": "video",
-			"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+			"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+			"thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
 		},
 		{
 			"type": "image",
@@ -85,17 +86,18 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 
 Array of **0–10** promotional demos (homepage carousel, features page, embedded YouTube, product tour). **Not** the website screenshot.
 
-| `type`    | Required fields | Example                                                       |
-| --------- | --------------- | ------------------------------------------------------------- |
-| `"video"` | `url`           | YouTube watch URL: `https://www.youtube.com/watch?v=VIDEO_ID` |
-| `"image"` | `url`           | Direct image URL: `https://example.com/demo.png`              |
+| `type`    | Fields (`url` is required) | Example                                                                                                                  |
+| --------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `"video"` | `url`, `thumbnail` (opt)   | `url`: YouTube watch URL / Direct `.mp4` URL<br>`thumbnail`: `https://img.youtube.com/...` (YouTube auto-derived or native poster) |
+| `"image"` | `url`                      | Direct image URL: `https://example.com/demo.png`                                                                         |
 
 **Video example (YouTube — preferred when available):**
 
 ```json
 {
 	"type": "video",
-	"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+	"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+	"thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
 }
 ```
 
@@ -110,6 +112,17 @@ Backend auto-derives `videoId` and thumbnail from YouTube URLs. Do **not** use `
 	"thumbnail": "https://example.com/assets/demo-poster.jpg"
 }
 ```
+
+#### 原生视频提取规范 (HTML5 Native Video)
+
+如果在提取页面内容时，页面包含了原生 `<video>` 播放器（例如 `<video class="native-video-player" src="..." poster="..." ...>` 或者是带有 `<source>` 的原生 HTML5 视频），请务必按以下规则提取：
+- **视频地址匹配**：提取 `<video>` 本身或子标签 `<source>` 中的 `src` 属性（或 `data-src` 延迟加载属性），作为 `productMedia` 中该项的 `url`。
+- **海报封面匹配**：提取 `<video>` 本身中的 `poster` 属性（或 `data-poster`），作为 `productMedia` 中该项的 `thumbnail`。
+- **链接规整绝对路径**：如果提取到的链接是相对路径，必须使用当前的网站 URL 进行拼接，保证其是合法的 `https://` 绝对路径。
+- **自动化提取工具**：您可以直接在终端运行本 Skill 下的 Python 辅助提取脚本来进行提取，它会自动规整为标准格式：
+  ```bash
+  python3 bat-skills/skills/bat-submit/scripts/extract_video.py <url_or_local_file_path> [base_url]
+  ```
 
 **Image example (feature screenshot / demo slide):**
 
@@ -126,6 +139,7 @@ Rules:
 - `url` must be absolute `https://`.
 - Prefer official promo content from the product site; order matters (first item = primary gallery slot).
 - Use `[]` only after checking homepage, features, and docs for embeds or demo images.
+- **禁止提取 Logo/Icon**：请勿将网站的 Logo 或应用图标作为 `productMedia` 中的一项进行提取（即使站点缺乏其它演示图片）。
 
 ### `pricingUrl` and `docsUrl` — extract primary URLs (in `base.json`)
 
