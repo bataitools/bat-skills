@@ -6,7 +6,7 @@ A collection of portable Agent Skills (instructions, workflows, and schemas) des
 
 | Skill | Path | Description |
 | :--- | :--- | :--- |
-| **bat-submit** | [`bat-submit/SKILL.md`](./bat-submit/SKILL.md) | Guides the AI agent through the 3-phase workflow (English crawl, translation, and packing) to submit AI tools to [bataitools.com](https://bataitools.com) via `bat-cli`. |
+| **bat-submit** | [`skills/bat-submit/SKILL.md`](./skills/bat-submit/SKILL.md) | Guides the AI agent through the 4-step workflow (extract, assets, translate, and submit) to submit AI tools to [bataitools.com](https://bataitools.com) via `bat-cli`. |
 
 ---
 
@@ -36,7 +36,7 @@ If you prefer manual setup, you can clone this repository and symlink or copy th
 ```bash
 # E.g., for Cursor:
 mkdir -p .cursor/skills
-ln -s /path/to/bat-skills/bat-submit .cursor/skills/bat-submit
+ln -s /path/to/bat-skills/skills/bat-submit .cursor/skills/bat-submit
 ```
 
 ---

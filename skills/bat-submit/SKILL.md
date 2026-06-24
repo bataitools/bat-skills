@@ -1,6 +1,6 @@
 ---
 name: bat-submit
-description: Submit an AI tool to BAT AI Tools (bataitools.com) via bat-cli CLI. Use a continuous 3-phase workflow — English, translate, then pack and submit.
+description: Submit an AI tool to BAT AI Tools (bataitools.com) via bat-cli CLI. Use a continuous 4-step workflow — extract, assets, translate, then pack and submit.
 agent_created: true
 triggers:
     - submit AI tool to bataitools
@@ -12,7 +12,7 @@ triggers:
 
 # BAT AI Tools — Submit Skill
 
-Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) using the `bat-cli` command-line tool. The workflow always runs in **3 sequential phases** without pausing for user confirmation between them.
+Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) using the `bat-cli` command-line tool. The workflow always runs in **4 sequential steps** without pausing for user confirmation between them.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
     - Formal account (OAuth, like `gh auth login`): `bat-cli login`
     - API key (CI): `bat-cli login --key <your-api-key>`
 3. API endpoint default: `https://api.bataitools.com` (override via `BAT_API_URL` env or `--api` flag).
-4. **Environment Requirements (环境准备)**:
+4. **Environment Requirements**:
     - **Playwright Chromium**: `bat-cli capture-screenshot` requires the Playwright chromium browser. Prior to running submission tasks, please ensure it is installed:
         ```bash
         npx playwright install chromium
@@ -38,13 +38,14 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
 
 ## Core Rule: Never generate all languages in one step
 
-Large single-file JSON causes truncation and validation failures. Always run the 3 phases back-to-back:
+Large single-file JSON causes truncation and validation failures. Always run the 4 steps back-to-back:
 
-| Phase                | What happens                                                           | Output                                                                                                |
-| -------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| **1. English**       | Crawl site, fill `base.json` + `i18n/en.json`, fetch logo + screenshot | `base.json`, `i18n/en.json`, local logo (webp/ico/png/jpg/jpeg), local screenshot (png/webp/jpg/jpeg) |
-| **2. Translate**     | Translate `en.json` into 27 other languages (batches of 3–4)           | `i18n/zh.json`, `i18n/ja.json`, … (28 total)                                                          |
-| **3. Pack & Submit** | Merge, validate, upload assets, POST                                   | `submit.bundle.json`, submission confirmed                                                            |
+| Step | What happens | Output |
+| --- | --- | --- |
+| **1. Extract** | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json` |
+| **2. Capture** | Capture screenshot & fetch logo, validate Phase 1 | local logo & screenshot, validation check |
+| **3. Translate** | Translate `en.json` into 27 other languages (batches) | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
+| **4. Submit** | Merge, final validate, upload assets, POST | `submit.bundle.json`, submission confirmed |
 
 ---
 
@@ -65,76 +66,90 @@ Throughout this skill, `<submit-dir>` = `./submits/<hostname>`, e.g. `./submits/
 
 ## Multiple sites
 
-When the user lists N websites, process **one site at a time** — full Phase 1→2→3 per site before starting the next. Never batch-crawl or batch-translate across sites.
+When the user lists N websites, process **one site at a time** — full Step 1→2→3→4 per site before starting the next. Never batch-crawl or batch-translate across sites.
 
 ---
 
-## Phase 1 — English only
+## Step 1 — Extract
 
 See `references/01-generate-en.md` for the complete crawl checklist, field guides, and voice rules.
 
 **Steps:**
 
-```bash
-bat-cli init-site --website <url>
-bat-cli schema en
-bat-cli capture-screenshot --website <url> --dir <submit-dir>
-bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
-```
+1. Initialize directory and fetch schema:
+   ```bash
+   bat-cli init-site --website <url>
+   bat-cli schema en
+   ```
+2. Crawl and write metadata files:
+   - `<submit-dir>/base.json` — shared metadata (links, social, developer identity, taxonomy)
+   - `<submit-dir>/i18n/en.json` — English text fields only
 
-Then write:
+**Semantic Self-Check:**
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in `references/01-generate-en.md`. Do not execute screenshot tools yet.
 
-- `<submit-dir>/base.json` — shared metadata (links, social, developer identity, taxonomy)
-- `<submit-dir>/i18n/en.json` — English text fields only
-
-Validate and continue immediately:
-
-```bash
-bat-cli validate-phase1 <submit-dir>
-# → proceed to Phase 2 without waiting
-```
-
-_(Note for Agent: Capture screenshot and fetch logo are intentionally performed in Phase 1 to enforce Fail-Fast. If asset fetching fails, we exit immediately before Phase 2, saving API costs and avoiding wasteful LLM translation calls)._
-
-**Key rules:**
+**Key rules for Step 1:**
 
 - Taxonomy codes (`categorys`, `tags`, `audiences`) must come from `bat-cli schema en` — never invent
 - `website` must be canonical URL without query parameters
 - `social` object must always include all 8 keys (`email`, `twitter`, `facebook`, `linkedin`, `instagram`, `youtube`, `tiktok`, `github`); use `""` when not found, never omit keys
-- Do **not** set `logo` or `websiteScreenshot` in `base.json` during Phase 1 (local files upload automatically at pack/submit)
+- Do **not** set `logo` or `websiteScreenshot` in `base.json` during Step 1 (local files upload automatically at pack/submit)
 - Developer fields: extract `developerName` first (verbatim maker name from site); derive `developerType` only from that name; `""` when not found — never guess
 
 ---
 
-## Phase 2 — Translate from English
+## Step 2 — Capture Assets & Phase 1 Validation
+
+Once Step 1 text files are ready, grab the visual assets and execute validation.
+
+**Steps:**
+
+1. Capture and fetch assets:
+   ```bash
+   bat-cli capture-screenshot --website <url> --dir <submit-dir>
+   bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
+   ```
+2. Execute validation:
+   ```bash
+   bat-cli validate-phase1 <submit-dir>
+   ```
+
+**Fail-Fast Rule:**
+If `validate-phase1` fails (Exit Code != 0), **stop the workflow immediately** and report the errors to the user. Do **not** proceed to Step 3, avoiding wasteful LLM translation calls.
+
+_(Note for Agent: Capturing screenshot and fetching logo are performed in Step 2 to ensure we only spend screenshot wait time on text-validated listings, while the validate-phase1 check ensures we do not run expensive translations if validation fails)._
+
+---
+
+## Step 3 — Translate from English
 
 See `references/02-translate-i18n.md` for localization rules, priceNote rules, and examples.
 
 All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl th hi uk fa bn ur sv no da fi he`
 
-**步骤：**
+**Steps:**
 
-1. **生成同构翻译模板**：
-   运行以下命令，为除了源语言外的其他 27 种语言自动生成带有占位符的 `i18n/<lang>.json` 模板文件：
+1. **Generate isomorphic translation templates**:
+   Run the following command to automatically generate `i18n/<lang>.json` template files with placeholders for the other 27 languages:
 
     ```bash
     bat-cli translate-template <submit-dir> --from en --to all
     ```
 
-    _该命令将递归读取英文 JSON 结构，如果是新增的翻译项则自动填充为占位符 `[TODO: TRANSLATE] 英文原文`。如果是已有文件，只会自动合并并补齐缺失的字段，绝不覆盖已有翻译。_
-    _同时它还会智能跳过 `chargeType`、`recommend`、`url`、`type` 等无须翻译的核心校验属性。_
+    _This command recursively reads the English JSON structure. For new translation items, it populates placeholders like `[TODO: TRANSLATE] English original`. If the file already exists, it only merges and fills missing fields, never overwriting existing translations._
+    _It also intelligently skips core validation properties that do not need translation, such as `chargeType`, `recommend`, `url`, `type`, etc._
 
-2. **调用智能体进行翻译**：
-   智能体读取这 27 个翻译模板文件，将其中包含 `[TODO: TRANSLATE]` 占位符的部分用相应语言的翻译替代并写回原处。
-   建议按以下批次（每次 3–4 个语言）进行 LLM 翻译调用：
+2. **Translate template placeholders**:
+   The AI agent reads these 27 translation template files, replaces the placeholders containing `[TODO: TRANSLATE]` with translations in the respective language, and writes them back.
+   It is recommended to translate in batches of 3–4 languages per LLM call in the following order:
 
     1. `zh`, `tw`, `ja`, `ko`
     2. `de`, `fr`, `it`, `nl`
-    3. `es`, `pt`, `ru`, `tr`
-    4. `ar`, `vi`, `id`, `th`
-    5. `hi`, `bn`, `ur`, `fa`
-    6. `pl`, `uk`
-    7. `sv`, `no`, `da`, `fi`, `he`
+    3. `es`, `pt`, `vi`, `id`
+    4. `ru`, `pl`, `uk`, `tr`
+    5. `ar`, `he`, `fa`, `ur`
+    6. `hi`, `bn`, `th`
+    7. `sv`, `no`, `da`, `fi`
 
 **Key rules:**
 
@@ -143,21 +158,28 @@ All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl t
 - Never translate `chargeType` values, JSON keys, URLs, or taxonomy slugs
 - `priceNote`: translate period/label words only (`month`→`月`); keep currency symbols and amounts unchanged (`$19 /month` → `$19 /月`)
 - Localize naturally — rewrite for fluency, not word-for-word
+- **Batch self-check:** After writing each translation batch (e.g. `zh, tw, ja, ko`), AI must verify the corresponding JSON files for syntax validity and structure integrity before moving to the next batch.
 
 ---
 
-## Phase 3 — Pack and Submit
+## Step 4 — Pack and Submit
 
 `bat-cli submit` auto-detects new vs update by checking if `website` is already listed.
 
 ```bash
+# 1. Pack the directory into a single bundle file
 bat-cli pack <submit-dir> -o <submit-dir>/submit.bundle.json
+
+# 2. Validate the bundle file against schemas and constraints
 bat-cli validate -f <submit-dir>/submit.bundle.json
+
+# 3. Submit the bundle file to the platform
 bat-cli submit -f <submit-dir>/submit.bundle.json
-# or one-step from directory:
+
+# OR execute packing, validation, and submission in a single command:
 bat-cli submit --dir <submit-dir>
 
-# Check submission status:
+# 4. Check the processing status of your submission
 bat-cli status --id <submitId>
 ```
 
