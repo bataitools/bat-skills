@@ -1,6 +1,6 @@
 # Step 3 — Translate from English
 
-**Prerequisite:** Step 1 (Extract) and Step 2 (Capture & Validate) completed successfully (`base.json` + `i18n/en.json` + local `logo.webp` and `website-screenshot.png`, or remote URLs in `base.json`) and `bat-cli validate-phase1` passed.
+**Prerequisite:** Step 1 (Extract) and Step 2 (Capture & Validate) completed successfully (`base.json` + `i18n/en.json` + local logo file (e.g. logo.webp, logo.svg, logo.ico) and `website-screenshot.png`, or remote URLs in `base.json`) and `bat-cli validate-phase1` passed.
 
 Read **only** `<submit-dir>/i18n/en.json`. Translate text fields into other languages. Write **one file per language** under `<submit-dir>/i18n/`.
 
@@ -16,7 +16,7 @@ Do **not** capture or upload screenshots per language — one website screenshot
 
 **Every language above must be present** before `bat-cli validate` / `submit` will pass.
 
-Run `bat-cli schema` to fetch the current list from the API.
+Run `bat-cli schema en` to fetch the current list from the API.
 
 ---
 

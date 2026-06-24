@@ -4,6 +4,15 @@ Once all 28 language JSON files (`i18n/*.json`) and metadata files (`base.json`)
 
 ---
 
+## 4.0 Authentication
+
+Before submitting, you must authenticate using the CLI (pick one):
+- Guest (auto-created on first submit): `bat-cli login-guest`
+- Formal account (OAuth, like `gh auth login`): `bat-cli login`
+- API key (CI): `bat-cli login --key <your-api-key>`
+
+---
+
 ## 4.1 CLI Commands
 
 You can run each sub-step individually or execute them in a single command.
@@ -37,7 +46,7 @@ bat-cli submit --dir <submit-dir>
 At `pack` or `submit --dir`, the CLI automatically handles the local assets:
 
 - **Upload Trigger**: If `base.json` has no remote asset URLs (i.e. `logo` and `websiteScreenshot` are empty or omitted), the CLI automatically uploads the local logo and website screenshot to the platform's CDN, and then writes the generated remote URLs back to `base.json`.
-- **Logo Auto-Conversion & Compression**: The CLI automatically converts and compresses the local logo file (supporting formats: `webp`, `ico`, `png`, `jpg`, `jpeg`) into a standard `logo.webp` (256×256 pixels, WebP, 90% quality) prior to uploading. **Note**: If the logo is an `svg` or `ico` file, it will bypass this conversion and be uploaded directly in its original format (prioritizing SVG and ICO).
+- **Logo Auto-Conversion & Compression**: The CLI automatically converts and compresses the local logo file (supporting formats: webp, png, jpg, jpeg) into a standard `logo.webp` (256×256 pixels, WebP, 90% quality) prior to uploading. **Note**: If the logo is an `svg` or `ico` file, it will bypass this conversion and be uploaded directly in its original format (prioritizing SVG and ICO).
 - **Screenshot Auto-Conversion & Compression**: The CLI automatically converts and compresses the local website screenshot (supporting formats: `webp`, `png`, `jpg`, `jpeg`) into an optimized `website-screenshot.webp` (maximum width 1920px, 80% quality) prior to uploading.
 - **Skipping Remote Assets**: If `base.json` already contains remote `https://...` URLs for `logo` or `websiteScreenshot`, the CLI will skip uploading local files.
 

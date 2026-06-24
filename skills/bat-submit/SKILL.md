@@ -24,12 +24,8 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
     # or
     bun add -g @bataitools/bat-cli
     ```
-2. **Authenticate** (pick one):
-    - Guest (auto-created on first submit): `bat-cli login-guest`
-    - Formal account (OAuth, like `gh auth login`): `bat-cli login`
-    - API key (CI): `bat-cli login --key <your-api-key>`
-3. API endpoint default: `https://api.bataitools.com` (override via `BAT_API_URL` env or `--api` flag).
-4. **Environment Requirements**:
+2. API endpoint default: `https://api.bataitools.com` (override via `BAT_API_URL` env or `--api` flag).
+3. **Environment Requirements**:
     - **Playwright Chromium**: `bat-cli capture-screenshot` requires the Playwright chromium browser. Prior to running submission tasks, please ensure it is installed:
         ```bash
         npx playwright install chromium
@@ -74,109 +70,52 @@ When the user lists N websites, process **one site at a time** — full Step 1�
 
 ## Step 1 — Extract
 
-See `references/01-extract.md` for the complete crawl checklist, field guides, and voice rules.
+Initialize the directory, crawl the target website, and extract the English metadata.
 
-**Steps:**
-
-1. Initialize directory and fetch schema:
-    ```bash
-    bat-cli init-site --website <url>
-    bat-cli schema en
-    ```
-2. Crawl and write metadata files:
-    - `<submit-dir>/base.json` — shared metadata (links, social, developer identity, taxonomy)
-    - `<submit-dir>/i18n/en.json` — English text fields only
+For the exact CLI commands, website crawl checklist, and comprehensive field guides (including taxonomy, social profiles, and developer identity rules), refer entirely to **[references/01-extract.md](references/01-extract.md)**.
 
 **Semantic Self-Check:**
-AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in `references/01-extract.md`. Do not execute screenshot tools yet.
-
-**Key rules for Step 1:**
-
-- Taxonomy codes (`categorys`, `tags`, `audiences`) must come from `bat-cli schema en` — never invent
-- `website` must be canonical URL without query parameters
-- `social` object must always include all 8 keys (`email`, `twitter`, `facebook`, `linkedin`, `instagram`, `youtube`, `tiktok`, `github`); use `""` when not found, never omit keys
-- Do **not** set `logo` or `websiteScreenshot` in `base.json` during Step 1 (local files upload automatically at pack/submit)
-- Developer fields: extract `developerName` first (verbatim maker name from site); derive `developerType` only from that name; `""` when not found — never guess
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). Do not execute screenshot tools yet.
 
 ---
 
 ## Step 2 — Capture Assets & Phase 1 Validation
 
-Once Step 1 text files are ready, grab the visual assets and execute validation. See `references/02-capture.md` for asset capturing commands and the pre-validation self-check list.
+Once Step 1 text files are ready, grab the visual assets and execute validation.
 
-**Steps:**
-
-1. Capture and fetch assets:
-    ```bash
-    bat-cli capture-screenshot --website <url> --dir <submit-dir>
-    bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
-    ```
-2. Execute validation:
-    ```bash
-    bat-cli validate-phase1 <submit-dir>
-    ```
+For the exact CLI commands, local asset rules, and the mandatory pre-validation self-check checklist, refer entirely to **[references/02-capture.md](references/02-capture.md)**.
 
 **Fail-Fast Rule:**
 If `validate-phase1` fails (Exit Code != 0), **stop the workflow immediately** and report the errors to the user. Do **not** proceed to Step 3, avoiding wasteful LLM translation calls.
-
-_(Note for Agent: Capturing screenshot and fetching logo are performed in Step 2 to ensure we only spend screenshot wait time on text-validated listings, while the validate-phase1 check ensures we do not run expensive translations if validation fails)._
 
 ---
 
 ## Step 3 — Translate from English
 
-See `references/03-translate.md` for localization rules, priceNote rules, and examples.
+Read **only** the English `i18n/en.json` to localize into the other 27 target languages.
 
-All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl th hi uk fa bn ur sv no da fi he`
+For the natural localization rules, priceNote translation guidelines, and diff merge logic, refer entirely to **[references/03-translate.md](references/03-translate.md)**.
 
-**Steps:**
-
-1. **Direct Translation & Diff Merge**:
-   AI must read `i18n/en.json` (as the sole source — do not re-crawl or fetch from the web) and generate or update the other 27 required language files (`i18n/<lang>.json`).
-   - **If the target file does not exist**: Translate the entirety of `en.json` and save the complete translated JSON.
-   - **If the target file already exists**: Load its existing translation, perform an in-memory diff merge to preserve existing translations, translate only new or modified keys, and save the updated JSON back.
-   - **Constraint**: Strictly follow all format constraints, translation rules, and skipped fields detailed in `references/03-translate.md`.
-
-2. **Execution Order & Self-Check**:
-   Translate and save the files in batches of 3–4 languages in the following order. After writing each batch, immediately verify the corresponding JSON files for syntax and structure validity before moving to the next batch:
-    1. `zh`, `tw`, `ja`, `ko`
-    2. `de`, `fr`, `it`, `nl`
-    3. `es`, `pt`, `vi`, `id`
-    4. `ru`, `pl`, `uk`, `tr`
-    5. `ar`, `he`, `fa`, `ur`
-    6. `hi`, `bn`, `th`
-    7. `sv`, `no`, `da`, `fi`
+**Execution Order & Self-Check**:
+Translate and save the files in batches of 3–4 languages in the following order. After writing each batch, immediately verify the corresponding JSON files for syntax and structure validity before moving to the next batch:
+ 1. `zh`, `tw`, `ja`, `ko`
+ 2. `de`, `fr`, `it`, `nl`
+ 3. `es`, `pt`, `vi`, `id`
+ 4. `ru`, `pl`, `uk`, `tr`
+ 5. `ar`, `he`, `fa`, `ur`
+ 6. `hi`, `bn`, `th`
+ 7. `sv`, `no`, `da`, `fi`
 
 ---
 
 ## Step 4 — Pack and Submit
 
-See `references/04-submit.md` for bundle packing guides, WebP conversion details, and status checking constraints.
+This is the final stage to package, validate, authenticate, and submit the site to the platform. 
 
-`bat-cli submit` auto-detects new vs update by checking if `website` is already listed.
+**Authentication**:
+Before submitting, you must authenticate. If not already authenticated, perform login at this step. See [references/04-submit.md](references/04-submit.md) for authentication choices.
 
-```bash
-# 1. Pack the directory into a single bundle file
-bat-cli pack <submit-dir> -o <submit-dir>/submit.bundle.json
-
-# 2. Validate the bundle file against schemas and constraints
-bat-cli validate -f <submit-dir>/submit.bundle.json
-
-# 3. Submit the bundle file to the platform
-bat-cli submit -f <submit-dir>/submit.bundle.json
-
-# OR execute packing, validation, and submission in a single command:
-bat-cli submit --dir <submit-dir>
-
-# 4. Check the processing status of your submission
-bat-cli status --id <submitId>
-```
-
-At `pack` / `submit --dir`: if `base.json` has no remote asset URLs, the CLI uploads the local logo and website screenshot to CDN and writes the URLs back to `base.json`:
-
-- **Logo auto-conversion**: The CLI automatically converts and compresses the local logo (supporting `webp`, `ico`, `png`, `jpg`, `jpeg`) into a standard `logo.webp` (256×256 WebP, 90% quality) prior to uploading.
-- **Screenshot auto-conversion**: The CLI automatically converts and compresses the local website screenshot (supporting `webp`, `png`, `jpg`, `jpeg`) into a optimized `website-screenshot.webp` (max width 1920px, 80% quality) prior to uploading.
-- Already-set remote URLs skip the upload.
+For the exact CLI commands, validation workflow, and automatic WebP assets conversion rules, refer entirely to **[references/04-submit.md](references/04-submit.md)**.
 
 ---
 
