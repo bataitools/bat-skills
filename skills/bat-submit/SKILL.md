@@ -18,11 +18,11 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
 
 ## Prerequisites
 
-1. **Install bat-cli:**
+1. **Install bat-cli (Ensure latest version):**
     ```bash
-    npm install -g @bataitools/bat-cli
+    npm install -g @bataitools/bat-cli@latest
     # or
-    bun add -g @bataitools/bat-cli
+    bun add -g @bataitools/bat-cli@latest
     ```
 2. API endpoint default: `https://api.bataitools.com` (override via `BAT_API_URL` env or `--api` flag).
 3. **Environment Requirements**:
