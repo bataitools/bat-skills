@@ -17,7 +17,7 @@ bat-cli init-site --website <url>
 bat-cli schema en
 ```
 
-- Taxonomy codes (`categorys`, `tags`, `audiences`) **must** come from `bat-cli schema en` — never invent codes.
+- Taxonomy codes (`categorys`, `tags`, `audiences`) **must** come strictly from the `code` field in `bat-cli schema en` output — never invent codes, and never use numeric `id` or `slug` fields.
 - `website` must be the canonical product URL **without query parameters**.
 
 ---
@@ -426,4 +426,4 @@ Only include tiers that **actually exist** on the website — do not invent plan
 
 ## 1.5 Semantic Self-Check
 
-Before ending Step 1, verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from `bat-cli schema en`. Do **NOT** proceed to Step 2 (Capture) if any text fields or categories are invalid.
+Before ending Step 1, verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from the `code` field in `bat-cli schema en` (do **NOT** use numeric `id` or `slug` fields). Do **NOT** proceed to Step 2 (Capture) if any text fields or categories are invalid.

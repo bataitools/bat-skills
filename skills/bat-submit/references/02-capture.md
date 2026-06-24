@@ -50,7 +50,7 @@ If `validate-phase1` fails (Exit Code != 0), **stop the workflow immediately** a
 
 Before stopping Step 2, verify:
 
-- [ ] `bat-cli schema en` codes used for taxonomy
+- [ ] `code` field from `bat-cli schema en` used for taxonomy (do not use numeric `id` or `slug` fields)
 - [ ] `pricingUrl` and `docsUrl` are extracted in `base.json` — searched nav/footer/common paths
 - [ ] `social` has all 8 keys — searched footer/social icons/contact page
 - [ ] `social.email` is a valid public email (or flagged to user if truly unavailable)
