@@ -74,7 +74,7 @@ When the user lists N websites, process **one site at a time** — full Step 1�
 
 ## Step 1 — Extract
 
-See `references/01-generate-en.md` for the complete crawl checklist, field guides, and voice rules.
+See `references/01-extract.md` for the complete crawl checklist, field guides, and voice rules.
 
 **Steps:**
 
@@ -88,7 +88,7 @@ See `references/01-generate-en.md` for the complete crawl checklist, field guide
     - `<submit-dir>/i18n/en.json` — English text fields only
 
 **Semantic Self-Check:**
-AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in `references/01-generate-en.md`. Do not execute screenshot tools yet.
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in `references/01-extract.md`. Do not execute screenshot tools yet.
 
 **Key rules for Step 1:**
 
@@ -102,7 +102,7 @@ AI must self-check all written fields before proceeding. Ensure all mandatory fi
 
 ## Step 2 — Capture Assets & Phase 1 Validation
 
-Once Step 1 text files are ready, grab the visual assets and execute validation.
+Once Step 1 text files are ready, grab the visual assets and execute validation. See `references/02-capture.md` for asset capturing commands and the pre-validation self-check list.
 
 **Steps:**
 
@@ -125,25 +125,20 @@ _(Note for Agent: Capturing screenshot and fetching logo are performed in Step 2
 
 ## Step 3 — Translate from English
 
-See `references/02-translate-i18n.md` for localization rules, priceNote rules, and examples.
+See `references/03-translate.md` for localization rules, priceNote rules, and examples.
 
 All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl th hi uk fa bn ur sv no da fi he`
 
 **Steps:**
 
-1. **Generate isomorphic translation templates**:
-   Run the following command to automatically generate `i18n/<lang>.json` template files with placeholders for the other 27 languages:
+1. **Direct Translation & Diff Merge**:
+   AI must read `i18n/en.json` (as the sole source — do not re-crawl or fetch from the web) and generate or update the other 27 required language files (`i18n/<lang>.json`).
+   - **If the target file does not exist**: Translate the entirety of `en.json` and save the complete translated JSON.
+   - **If the target file already exists**: Load its existing translation, perform an in-memory diff merge to preserve existing translations, translate only new or modified keys, and save the updated JSON back.
+   - **Constraint**: Strictly follow all format constraints, translation rules, and skipped fields detailed in `references/03-translate.md`.
 
-    ```bash
-    bat-cli translate-template <submit-dir> --from en --to all
-    ```
-
-    _This command recursively reads the English JSON structure. For new translation items, it populates placeholders like `[TODO: TRANSLATE] English original`. If the file already exists, it only merges and fills missing fields, never overwriting existing translations._
-    _It also intelligently skips core validation properties that do not need translation, such as `chargeType`, `recommend`, `url`, `type`, etc._
-
-2. **Translate template placeholders**:
-   The AI agent reads these 27 translation template files, replaces the placeholders containing `[TODO: TRANSLATE]` with translations in the respective language, and writes them back.
-   It is recommended to translate in batches of 3–4 languages per LLM call in the following order:
+2. **Execution Order & Self-Check**:
+   Translate and save the files in batches of 3–4 languages in the following order. After writing each batch, immediately verify the corresponding JSON files for syntax and structure validity before moving to the next batch:
     1. `zh`, `tw`, `ja`, `ko`
     2. `de`, `fr`, `it`, `nl`
     3. `es`, `pt`, `vi`, `id`
@@ -152,18 +147,11 @@ All 28 languages required: `en zh tw es ar id pt fr ja ru de ko tr vi it nl pl t
     6. `hi`, `bn`, `th`
     7. `sv`, `no`, `da`, `fi`
 
-**Key rules:**
-
-- Read only `i18n/en.json` as source — never re-crawl
-- Keep array lengths identical to `en.json`
-- Never translate `chargeType` values, JSON keys, URLs, or taxonomy slugs
-- `priceNote`: translate period/label words only (`month`→`月`); keep currency symbols and amounts unchanged (`$19 /month` → `$19 /月`)
-- Localize naturally — rewrite for fluency, not word-for-word
-- **Batch self-check:** After writing each translation batch (e.g. `zh, tw, ja, ko`), AI must verify the corresponding JSON files for syntax validity and structure integrity before moving to the next batch.
-
 ---
 
 ## Step 4 — Pack and Submit
+
+See `references/04-submit.md` for bundle packing guides, WebP conversion details, and status checking constraints.
 
 `bat-cli submit` auto-detects new vs update by checking if `website` is already listed.
 
@@ -194,5 +182,7 @@ At `pack` / `submit --dir`: if `base.json` has no remote asset URLs, the CLI upl
 
 ## Reference files
 
-- `references/01-generate-en.md` — Full Phase 1 crawl checklist, `base.json` field guide, `i18n/en.json` field guide, voice rules, pricing tier guide, developer identity rules
-- `references/02-translate-i18n.md` — Full Phase 2 localization rules, batching strategy, `priceNote` translation rules with examples
+- `references/01-extract.md` — Full crawl checklist, `base.json` & `i18n/en.json` field guide, voice rules, and constraints for Step 1 (Extract).
+- `references/02-capture.md` — Asset capture commands (`capture-screenshot`/`fetch-logo`), local layout rules, and `validate-phase1` self-check checklist for Step 2 (Capture).
+- `references/03-translate.md` — Multi-language localization rules, 28 languages batching strategy, and `priceNote` translations for Step 3 (Translate).
+- `references/04-submit.md` — CLI commands, bundle packing guides, automatic WebP assets conversion, CDN uploads, and status checking for Step 4 (Submit).

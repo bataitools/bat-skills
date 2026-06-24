@@ -1,12 +1,14 @@
-# Phase 2 — Translate from English
+# Step 3 — Translate from English
 
-**Prerequisite:** Phase 1 completed (`base.json` + `i18n/en.json` + local `logo.webp` and `website-screenshot.png`, or remote URLs in `base.json`) and `bat-cli validate-phase1` passed.
+**Prerequisite:** Step 1 (Extract) and Step 2 (Capture & Validate) completed successfully (`base.json` + `i18n/en.json` + local `logo.webp` and `website-screenshot.png`, or remote URLs in `base.json`) and `bat-cli validate-phase1` passed.
 
 Read **only** `<submit-dir>/i18n/en.json`. Translate text fields into other languages. Write **one file per language** under `<submit-dir>/i18n/`.
 
 Do **not** capture or upload screenshots per language — one website screenshot (local file or `websiteScreenshot` in `base.json`) is shared by all languages. Upload to CDN happens at `pack` / `submit`, not during translation.
 
-## Target languages — all required (28 total)
+---
+
+## 3.1 Target languages — all required (28 total)
 
 `en` plus:
 
@@ -16,25 +18,17 @@ Do **not** capture or upload screenshots per language — one website screenshot
 
 Run `bat-cli schema` to fetch the current list from the API.
 
-## Recommended batching (stability)
+---
 
-Translate in batches of **3–4 languages per LLM call**, not all at once:
+## 3.2 Recommended batching (stability)
 
-1. Batch A: `zh`, `tw`, `ja`, `ko`
-2. Batch B: `de`, `fr`, `it`, `nl`
-3. Batch C: `es`, `pt`, `ru`, `tr`
-4. Batch D: `ar`, `vi`, `id`, `th`
-5. Batch E: `hi`, `bn`, `ur`, `fa`
-6. Batch F: `pl`, `uk`
-7. Batch G: `sv`, `no`, `da`, `fi`, `he`
+Please strictly follow the 7-batch **Execution Order** defined in `SKILL.md` to translate languages in groups of 3–4. Do not translate all 27 languages in a single session to prevent LLM context truncation or output loss.
 
-Each batch output: separate files `i18n/zh.json`, `i18n/ja.json`, etc.
+---
 
-## Localization — rewrite for the target language (not word-for-word)
+## 3.3 Localization — rewrite for the target language (not word-for-word)
 
 **Yes — natural localization reads better than literal translation.** Your job is to produce copy a native speaker would write on a product page in that language, not an English sentence with words swapped.
-
-> **Note:** Non-English text in the tables below is **expected target-locale output** (e.g. `zh.json`, `ja.json`), not instruction language. Instructions in this file stay in English.
 
 | Do                                                                                                    | Don't                                                  |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
@@ -54,7 +48,7 @@ Each batch output: separate files `i18n/zh.json`, `i18n/ja.json`, etc.
 - Array lengths and JSON structure
 - Factual claims — do not add benefits; do not remove limits stated in English
 
-### Voice (carry over from Phase 1)
+### Voice (carry over from Step 1)
 
 Keep the same **factual, plain** tone as `en.json`. Natural rewrite is encouraged; marketing fluff is not. Do not add superlatives or AI-isms that are not in the English source.
 
@@ -76,7 +70,9 @@ Keep the same **factual, plain** tone as `en.json`. Natural rewrite is encourage
 
 **`developerName`**: keep as on site (often Latin script); do not transliterate company names unless the English source already does.
 
-## What to translate
+---
+
+## 3.4 What to translate
 
 Translate all string text in:
 
@@ -113,21 +109,17 @@ Translate **billing period words and labels only**. **Never change currency symb
 
 Each `priceNote` must still be a non-empty string (max 100 chars).
 
-## What NOT to translate or change
+---
+
+## 3.5 What NOT to translate or change
 
 - JSON keys
 - Array lengths (must match `en.json` exactly)
 - URLs, emails, product names that are proper nouns (keep brand name consistent)
 - `chargeType` in each `pricing[]` item (must match `en.json` exactly)
 
-## Per-file output shape
+---
 
-Each `i18n/<lang>.json` has the **same structure** as `i18n/en.json`, only with translated text.
+## 3.6 Output file structure
 
-## After all languages
-
-```bash
-bat-cli pack <submit-dir> -o <submit-dir>/submit.bundle.json
-bat-cli validate -f <submit-dir>/submit.bundle.json
-bat-cli submit -f <submit-dir>/submit.bundle.json
-```
+Each `i18n/<lang>.json` has the **same structure** as `i18n/en.json`, only with translated text. After completing all translations, proceed to Step 4 (Pack and Submit).

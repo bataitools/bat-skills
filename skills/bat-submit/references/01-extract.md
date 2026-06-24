@@ -1,6 +1,6 @@
-# Phase 1 — Generate English only
+# Step 1 — Extract (Crawl & English Metadata)
 
-**Do NOT generate all languages in one step.** Only produce `base.json` + `i18n/en.json`.
+**Do NOT generate all languages in one step.** Only produce `base.json` + `i18n/en.json` in this step.
 
 Your job is to **actively crawl and extract** — not summarize the homepage or rewrite it as generic AI marketing copy. Missing optional fields is acceptable only after you have **searched** for them (nav, footer, sitemap, common paths). Use `""` when genuinely not found; **never omit keys** from `links` or `social`.
 
@@ -8,30 +8,21 @@ Your job is to **actively crawl and extract** — not summarize the homepage or 
 
 ---
 
-## Step 0 — Setup (before writing files)
+## 1.1 Setup & Schema (before writing files)
 
 `<submit-dir>` = per-site folder, e.g. `./submits/www.example.com` (from `bat-cli site-dir <url>` — host lowercased only).
 
 ```bash
 bat-cli init-site --website <url>
 bat-cli schema en
-bat-cli capture-screenshot --website <url> --dir <submit-dir>
-```
-
-After finding a logo URL from the site (see crawl checklist), process it locally:
-
-```bash
-bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
 ```
 
 - Taxonomy codes (`categorys`, `tags`, `audiences`) **must** come from `bat-cli schema en` — never invent codes.
 - `website` must be the canonical product URL **without query parameters**.
-- **Logo:** save as `<submit-dir>/logo.webp` (256×256 webp via `fetch-logo`). **Do not put a remote URL in `base.json` during Phase 1** unless the user supplied a custom CDN URL.
-- **Screenshot:** save locally as `<submit-dir>/website-screenshot.png` (same level as `base.json`). **Do not upload in Phase 1.** Upload happens automatically at `pack` / `submit` unless `base.json` already has a remote `websiteScreenshot` URL.
 
 ---
 
-## Step 1 — Mandatory website crawl checklist
+## 1.2 Mandatory website crawl checklist
 
 Do **not** stop at the homepage. Visit and inspect (fetch HTML, follow nav/footer links):
 
@@ -40,7 +31,7 @@ Do **not** stop at the homepage. Visit and inspect (fetch HTML, follow nav/foote
 | **Pricing**            | `pricingUrl` (in `base.json`)                                             | `/pricing`, `/plans`, `/price`, footer "Pricing"                                                                                                                                                            |
 | **About / Docs**       | `docsUrl` (in `base.json`)                                                | `/docs`, `/documents`, `/about`, `/about-us`, `/company`, `/team`                                                                                                                                           |
 | **Contact / email**    | `social.email`                                                            | Footer, `/contact`, `mailto:` links, privacy/terms pages                                                                                                                                                    |
-| **Logo**               | `logo` (local file)                                                       | Find URL from `<link rel="icon">`, header logo `src`, JSON-LD `Organization.logo`, or `og:image` (prefer square logo over OG banner). Run `bat-cli fetch-logo --url <url> --dir <submit-dir>` → `logo.webp` |
+| **Logo**               | Find remote logo URL                                                      | Find URL from `<link rel="icon">`, header logo `src`, JSON-LD `Organization.logo`, or `og:image` (prefer square logo over OG banner). (Keep this URL handy for Step 2)                                        |
 | **Social profiles**    | `social.*` URLs                                                           | Footer icons, header, `/community`, press kit — see Social table below                                                                                                                                      |
 | **Product media**      | `productMedia`                                                            | Homepage hero, features page, embedded YouTube/Vimeo, demo GIFs                                                                                                                                             |
 | **Developer identity** | `developerType`, `developerCountry`, `developerProvince`, `developerName` | JSON-LD (`Organization`), About/Team, Privacy/Terms, Contact address, footer legal line, country-code TLD — see strict rules below                                                                          |
@@ -49,7 +40,7 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 
 ---
 
-## Step 2 — `base.json` field guide
+## 1.3 `base.json` field guide
 
 ### Required shape — always include **all keys** below
 
@@ -88,16 +79,11 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 }
 ```
 
-`logo` and `websiteScreenshot` in `base.json` are **optional during Phase 1**. Omit them or leave `""` when using local files:
-
-- `<submit-dir>/logo.webp` via `fetch-logo`
-- `<submit-dir>/website-screenshot.png` via `capture-screenshot --dir`
-
-Set remote `https://...` URLs only if the user provides custom CDN assets. At `pack` / `submit`, local files upload automatically when remote URLs are absent.
+`logo` and `websiteScreenshot` in `base.json` are **omitted or left as `""` during Step 1**. Local files (to be grabbed in Step 2) upload automatically at `pack` / `submit` unless `base.json` already has remote `https://...` URLs.
 
 ### `productMedia` — gallery items (video + image)
 
-Array of **0–10** promotional demos (homepage carousel, features page, embedded YouTube, product tour). **Not** the website screenshot (`websiteScreenshot` is separate).
+Array of **0–10** promotional demos (homepage carousel, features page, embedded YouTube, product tour). **Not** the website screenshot.
 
 | `type`    | Required fields | Example                                                       |
 | --------- | --------------- | ------------------------------------------------------------- |
@@ -241,14 +227,9 @@ Only from **explicit** address or jurisdiction on site. May be `""`. Never guess
 
 **Agent submit:** all four fields may be `""` when the site does not disclose them.
 
-### Other `base.json` fields
-
-- **`categorys` / `tags` / `audiences`**: arrays of slugs from `bat-cli schema en` only.
-- **`productMedia`**: see section above — include both `video` and `image` examples when the site has them.
-
 ---
 
-## Step 3 — `i18n/en.json` field guide
+## 1.4 `i18n/en.json` field guide
 
 ### Writing voice — extract first, minimal rewrite
 
@@ -436,16 +417,6 @@ Put plan limits (credits, seats, API calls, export quality) in **`features`**, n
 
 Only include tiers that **actually exist** on the website — do not invent plans.
 
-#### Translation note (Phase 2)
-
-- `chargeType` stays **identical to `en.json`** in all languages (never translated).
-- `priceNote` may localize **period/label words only** (e.g. `month`→`月`, `one-time`→`一次性`, `Free`→`免费`); **currency symbols and numeric amounts must stay unchanged** (e.g. `$19 /month` → `$19 /月`).
-- `features[]` strings get fully translated per locale.
-
-See `02-translate-i18n.md` for `priceNote` examples.
-
-Sync `pricingUrl` in `base.json` with the pricing page you crawled.
-
 ### SEO
 
 - `seo.title`: `name` + shortest factual value phrase from the site (≤ ~60 chars) — not a new slogan
@@ -453,36 +424,6 @@ Sync `pricingUrl` in `base.json` with the pricing page you crawled.
 
 ---
 
-## Step 4 — Pre-submit self-check
+## 1.5 Semantic Self-Check
 
-Before stopping Phase 1, verify:
-
-- [ ] `bat-cli schema en` codes used for taxonomy
-- [ ] `pricingUrl` and `docsUrl` are extracted in `base.json` — searched nav/footer/common paths
-- [ ] `social` has all 8 keys — searched footer/social icons/contact page
-- [ ] `social.email` is a valid public email (or flagged to user if truly unavailable)
-- [ ] `logo.webp` exists in `<submit-dir>` (via `fetch-logo`) **or** `base.json` has a remote `logo` URL
-- [ ] `website-screenshot.png` exists in `<submit-dir>` (via `capture-screenshot --dir`) **or** `base.json` has a remote `websiteScreenshot` URL
-- [ ] Each `pricing[]` item has only `name`, `chargeType`, `priceNote`, `features`, `recommend` (no `price` / `plan` typos)
-- [ ] `chargeType` is one of: `free`, `recurring`, `flat`, `contact`
-- [ ] Pricing tiers match the live pricing page
-- [ ] `productMedia` uses only `"video"` / `"image"` types with valid URLs (or `[]` after search)
-- [ ] **`developerName`**: proper maker name cited on site, or `""` (not product name, not domain)
-- [ ] **`developerType`**: derived from `developerName` only (`company` / `team` / `individual`), or `""` — never guessed
-- [ ] **`developerCountry` / `developerProvince`**: cited on site, or both `""`
-- [ ] `validate-phase1` passes
-- [ ] **Voice:** `tagline` / `description` / features cite real site facts; no banned AI-isms unless on the site verbatim
-- [ ] **FAQs:** every Q&A traceable to FAQ/docs/help — none invented
-- [ ] **Specifics:** numbers, formats, limits match the pricing/features pages
-
-```bash
-bat-cli validate-phase1 <submit-dir>
-```
-
----
-
-## After Phase 1 — continue to Phase 2 immediately
-
-When `validate-phase1` passes, **do not stop or ask the user to confirm**. Proceed directly to Phase 2 (`02-translate-i18n.md`) in the same session.
-
-Optionally log a one-line summary (product name, taxonomy codes, pricing tier count) for transparency — but never block on user input unless the user explicitly asked to pause.
+Before ending Step 1, verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from `bat-cli schema en`. Do **NOT** proceed to Step 2 (Capture) if any text fields or categories are invalid.
