@@ -1,39 +1,27 @@
-# Step 2 — Capture Assets & Phase 1 Validation
+# Step 2 — Agent-Side Assets Generation & Phase 1 Validation
 
-Once Step 1 text files are ready, grab the visual assets and execute validation.
-
-## 2.1 Environment Requirements (Playwright)
-
-`bat-cli capture-screenshot` requires the Playwright chromium browser. Prior to running submission tasks, please ensure it is installed:
-
-```bash
-npx playwright install chromium
-```
-
-*(While the CLI will attempt to auto-install this browser on the first run of `capture-screenshot`, pre-installing is highly recommended to avoid execution delays or environment-specific timeout issues).*
+Once Step 1 text files are ready, the AI Agent must generate visual assets locally, perform the necessary formatting and compression, and execute Phase 1 validation.
 
 ---
 
-## 2.2 Capture Screenshot & Fetch Logo
+## 2.1 Generate Assets (Agent-Side Responsibility)
 
-Capture the product screenshot locally:
+The `bat-cli` does **not** handle web screenshot capturing or logo formatting anymore. It strictly acts as a validation and upload channel. The AI Agent must generate and prepare the visual assets locally using its own scripts/tools.
 
-```bash
-bat-cli capture-screenshot --website <url> --dir <submit-dir>
-```
+### 1. Logo Specifications
+- **Locate and Download**: Search for the tool's logo on the target site (or favicon), download it using a simple fetch request, and save it under `<submit-dir>` as `logo.webp` (preferred), `logo.svg`, or `logo.png`.
+- **Constraint**: The final logo file size **must be under 50KB**. If it exceeds 50KB, the Agent must write a lightweight script (e.g., Python PIL/Pillow or Node.js canvas) to compress it down to under 50KB.
+- **base.json check**: Do not put a remote logo URL in `base.json` unless the user explicitly requested a custom CDN URL.
 
-After finding a logo URL from the site (see crawl checklist in Step 1), fetch and process it locally:
-
-```bash
-bat-cli fetch-logo --url <absolute-logo-url> --dir <submit-dir>
-```
-
-- **Logo:** save as `<submit-dir>/logo.svg`, `logo.ico` or `logo.webp` (SVG and ICO will not be converted to WebP; other formats will be converted to 256×256 WebP via `fetch-logo` / `pack`). **Do not put a remote URL in `base.json` during Step 1 & Step 2** unless the user supplied a custom CDN URL.
-- **Screenshot:** save locally as `<submit-dir>/website-screenshot.png` (same level as `base.json`). **Do not upload in Step 2.** Upload happens automatically at Step 4 `pack` / `submit` unless `base.json` already has a remote `websiteScreenshot` URL.
+### 2. Website Screenshot Specifications
+- **Dimension**: The screenshot must be captured at **1080p resolution** (typically width `1920` pixels, height dynamically adjusted).
+- **Format**: It **must be in WebP format** (saved strictly as `<submit-dir>/website-screenshot.webp`). PNG or other formats will be rejected by the CLI.
+- **Constraint**: The screenshot file size **must be under 200KB** (recommended size is several tens of KBs). If the captured WebP is too large, the Agent must write a Python/Node script to compress it (e.g., setting WebP quality to 75-80, or resizing dimensions) until it is under 200KB.
+- **base.json check**: Do not put a remote websiteScreenshot URL in `base.json`.
 
 ---
 
-## 2.3 Execute Phase 1 Validation
+## 2.2 Execute Phase 1 Validation
 
 Run the validation command against the site directory:
 
@@ -46,7 +34,7 @@ If `validate-phase1` fails (Exit Code != 0), **stop the workflow immediately** a
 
 ---
 
-## 2.4 Pre-validation self-check
+## 2.3 Pre-validation self-check
 
 Before stopping Step 2, verify:
 
@@ -54,8 +42,8 @@ Before stopping Step 2, verify:
 - [ ] `pricingUrl` and `docsUrl` are extracted in `base.json` — searched nav/footer/common paths
 - [ ] `social` has all 8 keys — searched footer/social icons/contact page
 - [ ] `social.email` is a valid public email (or flagged to user if truly unavailable)
-- [ ] Local logo file (`logo.svg`, `logo.webp`, etc.) exists in `<submit-dir>` **or** `base.json` has a remote `logo` URL
-- [ ] `website-screenshot.png` exists in `<submit-dir>` (via `capture-screenshot --dir`) **or** `base.json` has a remote `websiteScreenshot` URL
+- [ ] Local logo file (`logo.svg`, `logo.webp`, etc.) exists in `<submit-dir>` and is **under 50KB** (or `base.json` has a remote `logo` URL)
+- [ ] Local screenshot file `website-screenshot.webp` exists in `<submit-dir>`, is in **WebP format**, and is **under 200KB** (or `base.json` has a remote `websiteScreenshot` URL)
 - [ ] Each `pricing[]` item has only `name`, `chargeType`, `priceNote`, `features`, `recommend` (no `price` / `plan` typos)
 - [ ] `chargeType` is one of: `free`, `recurring`, `flat`, `contact`
 - [ ] Pricing tiers match the live pricing page

@@ -25,12 +25,6 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
     bun add -g @bataitools/bat-cli@latest
     ```
 2. API endpoint default: `https://api.bataitools.com` (override via `BAT_API_URL` env or `--api` flag).
-3. **Environment Requirements**:
-    - **Playwright Chromium**: `bat-cli capture-screenshot` requires the Playwright chromium browser. Prior to running submission tasks, please ensure it is installed:
-        ```bash
-        npx playwright install chromium
-        ```
-        _(While the CLI will attempt to auto-install this browser on the first run of `capture-screenshot`, pre-installing is highly recommended to avoid execution delays or environment-specific timeout issues)._
 
 ---
 
@@ -41,7 +35,7 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | Step             | What happens                                              | Output                                       |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------- |
 | **1. Extract**   | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json`                  |
-| **2. Capture**   | Capture screenshot & fetch logo, validate Phase 1         | local logo & screenshot, validation check    |
+| **2. Capture**   | Agent captures webp screenshot & fetches logo, validate   | local logo & screenshot, validation check    |
 | **3. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **4. Submit**    | Merge, final validate, upload assets, POST                | `submit.bundle.json`, submission confirmed   |
 
@@ -122,6 +116,6 @@ For the exact CLI commands, validation workflow, and automatic WebP assets conve
 ## Reference files
 
 - `references/01-extract.md` — Full crawl checklist, `base.json` & `i18n/en.json` field guide, voice rules, and constraints for Step 1 (Extract).
-- `references/02-capture.md` — Asset capture commands (`capture-screenshot`/`fetch-logo`), local layout rules, and `validate-phase1` self-check checklist for Step 2 (Capture).
+- `references/02-capture.md` — Agent-side assets generation/compression guidelines, local layout rules, and `validate-phase1` self-check checklist for Step 2 (Capture).
 - `references/03-translate.md` — Multi-language localization rules, 28 languages batching strategy, and `priceNote` translations for Step 3 (Translate).
-- `references/04-submit.md` — CLI commands, bundle packing guides, automatic WebP assets conversion, CDN uploads, and status checking for Step 4 (Submit).
+- `references/04-submit.md` — CLI commands, bundle packing guides, CDN uploads, and status checking for Step 4 (Submit).
