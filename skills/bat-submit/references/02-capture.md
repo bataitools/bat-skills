@@ -9,14 +9,16 @@ Once Step 1 text files are ready, the AI Agent must generate visual assets local
 The `bat-cli` does **not** handle web screenshot capturing or logo formatting anymore. It strictly acts as a validation and upload channel. The AI Agent must generate and prepare the visual assets locally using its own scripts/tools.
 
 ### 1. Logo Specifications
+
 - **Locate and Download**: Search for the tool's logo on the target site (or favicon), download it using a simple fetch request, and save it under `<submit-dir>` as `logo.webp` (preferred), `logo.svg`, or `logo.png`.
-- **Constraint**: The final logo file size **must be under 50KB**. If it exceeds 50KB, the Agent must write a lightweight script (e.g., Python PIL/Pillow or Node.js canvas) to compress it down to under 50KB.
+- **Constraint**: The final logo file size **must be under 20KB**. If it exceeds 20KB, the Agent must write a lightweight script (e.g., Python PIL/Pillow or Node.js canvas) to compress it down to under 20KB.
 - **base.json check**: Do not put a remote logo URL in `base.json` unless the user explicitly requested a custom CDN URL.
 
 ### 2. Website Screenshot Specifications
+
 - **Dimension**: The screenshot must be captured at **1080p resolution** (typically width `1920` pixels, height dynamically adjusted).
 - **Format**: It **must be in WebP format** (saved strictly as `<submit-dir>/website-screenshot.webp`). PNG or other formats will be rejected by the CLI.
-- **Constraint**: The screenshot file size **must be under 200KB** (recommended size is several tens of KBs). If the captured WebP is too large, the Agent must write a Python/Node script to compress it (e.g., setting WebP quality to 75-80, or resizing dimensions) until it is under 200KB.
+- **Constraint**: The screenshot file size **must be under 100KB** (recommended size is several tens of KBs). If the captured WebP is too large, the Agent must write a Python/Node script to compress it (e.g., setting WebP quality to 75-80, or resizing dimensions) until it is under 100KB.
 - **base.json check**: Do not put a remote websiteScreenshot URL in `base.json`.
 
 ---
@@ -42,8 +44,8 @@ Before stopping Step 2, verify:
 - [ ] `pricingUrl` and `docsUrl` are extracted in `base.json` — searched nav/footer/common paths
 - [ ] `social` has all 8 keys — searched footer/social icons/contact page
 - [ ] `social.email` is a valid public email (or flagged to user if truly unavailable)
-- [ ] Local logo file (`logo.svg`, `logo.webp`, etc.) exists in `<submit-dir>` and is **under 50KB** (or `base.json` has a remote `logo` URL)
-- [ ] Local screenshot file `website-screenshot.webp` exists in `<submit-dir>`, is in **WebP format**, and is **under 200KB** (or `base.json` has a remote `websiteScreenshot` URL)
+- [ ] Local logo file (`logo.svg`, `logo.webp`, etc.) exists in `<submit-dir>` and is **under 20KB** (or `base.json` has a remote `logo` URL)
+- [ ] Local screenshot file `website-screenshot.webp` exists in `<submit-dir>`, is in **WebP format**, and is **under 100KB** (or `base.json` has a remote `websiteScreenshot` URL)
 - [ ] Each `pricing[]` item has only `name`, `chargeType`, `priceNote`, `features`, `recommend` (no `price` / `plan` typos)
 - [ ] `chargeType` is one of: `free`, `recurring`, `flat`, `contact`
 - [ ] Pricing tiers match the live pricing page
