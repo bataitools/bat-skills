@@ -155,7 +155,7 @@ Use full `https://` URLs. If not found after searching → `""`.
 
 | Field       | Required                     | How to extract                                                                                 |
 | ----------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
-| `email`     | **Must be valid** if present | Public support/contact email from footer, contact page, or `mailto:`. Required for validation. |
+| `email`     | **Optional** | Public support/contact email from footer, contact page, or `mailto:`. If provided, it must be a valid email syntax. |
 | `twitter`   | Always present               | `twitter.com` / `x.com` profile URL                                                            |
 | `facebook`  | Always present               | Facebook page URL                                                                              |
 | `linkedin`  | Always present               | LinkedIn company or product URL                                                                |
