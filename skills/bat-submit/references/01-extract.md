@@ -441,4 +441,15 @@ Only include tiers that **actually exist** on the website — do not invent plan
 
 ## 1.5 Semantic Self-Check
 
-Before ending Step 1, verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from the `code` field in `bat-cli schema en` (do **NOT** use numeric `id` or `slug` fields, and ensure their counts do not exceed limits: **10** for `categorys`, **10** for `audiences`, and **15** for `tags`). Do **NOT** proceed to Step 2 (Capture) if any text fields or categories are invalid.
+Before ending Step 1, you must perform both manual and automated verification:
+
+1. **Manual Check**: Verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from the `code` field in `bat-cli schema en` (do **NOT** use numeric `id` or `slug` fields, and ensure their counts do not exceed limits: **10** for `categorys`, **10** for `audiences`, and **15** for `tags`).
+2. **Automated Verification**: **Run the validation command against the site directory:**
+   ```bash
+   bat-cli validate-phase1 <submit-dir>
+   ```
+   *Note: This command only validates text fields in `base.json` and `i18n/en.json` (placeholder references will stand in for missing screenshots/logos during this step).*
+
+**Fail-Fast Rule**:
+If `validate-phase1` fails (Exit Code != 0), **you must fix the errors in this step first**. Do **NOT** proceed to Step 2 (Capture) or any subsequent steps until `validate-phase1` passes successfully.
+

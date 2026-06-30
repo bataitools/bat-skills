@@ -20,6 +20,49 @@ The `bat-cli` does **not** handle web screenshot capturing or logo formatting an
 - **Format**: It **must be in WebP format** (saved strictly as `<submit-dir>/website-screenshot.webp`). PNG or other formats will be rejected by the CLI.
 - **Constraint**: The screenshot file size **must be under 100KB** (recommended size is several tens of KBs). If the captured WebP is too large, the Agent must write a Python/Node script to compress it (e.g., setting WebP quality to 75-80, or resizing dimensions) until it is under 100KB.
 - **base.json check**: Do not put a remote websiteScreenshot URL in `base.json`.
+- **Recommended Capture Method (Do NOT install Playwright/Puppeteer inside virtual environments to prevent OOM)**:
+  Since the agent runs on the user's host machine (which may be macOS, Windows, or Linux), you should avoid downloading and installing heavy browser runtimes like Playwright or Puppeteer. Instead, use these lightweight, multi-platform approaches:
+  
+  **Option A: Multi-Platform System Browser Headless (Recommended & Safest)**:
+  First, detect the host OS and find the first executable browser path that exists:
+  - **macOS**:
+    1. `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`
+    2. `"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"`
+    3. `"/Applications/Chromium.app/Contents/MacOS/Chromium"`
+  - **Windows**:
+    1. `"C:\Program Files\Google\Chrome\Application\chrome.exe"`
+    2. `"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"`
+    3. `"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"`
+  - **Linux**:
+    - Query commands available in PATH: `google-chrome`, `google-chrome-stable`, `chromium-browser`, `chromium`
+
+  Once a browser binary path is resolved, execute it in headless mode to capture a PNG screenshot (the syntax is identical for Chrome, Edge, and Chromium):
+  ```bash
+  "<resolved-browser-path>" --headless --disable-gpu --screenshot=<submit-dir>/temp.png --window-size=1920,1080 <url>
+  ```
+  Then, convert and compress the PNG image to WebP (under 100KB) and clean up the temporary file:
+  - **On macOS (Native tool)**:
+    ```bash
+    sips -s format webp <submit-dir>/temp.png --out <submit-dir>/website-screenshot.webp
+    rm <submit-dir>/temp.png
+    ```
+  - **Cross-Platform (Python Pillow)**: If Python is available, execute a lightweight Python script:
+    ```python
+    from PIL import Image
+    im = Image.open("<submit-dir>/temp.png")
+    im.save("<submit-dir>/website-screenshot.webp", "WEBP", quality=75)
+    ```
+    This only requires installing Pillow (`pip install Pillow`), which is fast, lightweight, and prevents OOM.
+  - **Cross-Platform (Node.js)**: If global or local `sharp` is available, write a quick script to do the conversion.
+
+  **Option B: Direct `npx playwright` (Fallback)**:
+  If Playwright is already installed globally, or you prefer to run it as a global utility without downloading browsers into the local virtual environment:
+  ```bash
+  npx playwright screenshot --viewport-size=1920,1080 <url> <submit-dir>/website-screenshot.webp
+  ```
+  Fallback to Option A immediately if any installation or OOM errors occur.
+
+
 
 ---
 
