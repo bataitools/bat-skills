@@ -7,6 +7,10 @@ triggers:
     - submit AI tool to bat ai tools
     - publish to BAT AI Tools directory
     - add tool to bataitools.com
+    - list my tool on BAT AI
+    - list tool on bataitools
+    - list my tool on bataitools.com
+    - List my tool on BAT AI TOOLS
     - bat-cli submit
     - 提交 AI 工具到 bataitools
     - 提交 AI 工具到 bat
@@ -92,19 +96,20 @@ For the natural localization rules, priceNote translation guidelines, and diff m
 
 **Execution Order & Self-Check**:
 Translate and save the files in batches of 3–4 languages in the following order. After writing each batch, immediately verify the corresponding JSON files for syntax and structure validity before moving to the next batch:
- 1. `zh`, `tw`, `ja`, `ko`
- 2. `de`, `fr`, `it`, `nl`
- 3. `es`, `pt`, `vi`, `id`
- 4. `ru`, `pl`, `uk`, `tr`
- 5. `ar`, `he`, `fa`, `ur`
- 6. `hi`, `bn`, `th`
- 7. `sv`, `no`, `da`, `fi`
+
+1.  `zh`, `tw`, `ja`, `ko`
+2.  `de`, `fr`, `it`, `nl`
+3.  `es`, `pt`, `vi`, `id`
+4.  `ru`, `pl`, `uk`, `tr`
+5.  `ar`, `he`, `fa`, `ur`
+6.  `hi`, `bn`, `th`
+7.  `sv`, `no`, `da`, `fi`
 
 ---
 
 ## Step 4 — Pack and Submit
 
-This is the final stage to package, validate, authenticate, and submit the site to the platform. 
+This is the final stage to package, validate, authenticate, and submit the site to the platform.
 
 **Authentication**:
 Before submitting, you must authenticate. If not already authenticated, perform login at this step. See [references/04-submit.md](references/04-submit.md) for authentication choices.
