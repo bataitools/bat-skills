@@ -39,7 +39,7 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | Step             | What happens                                              | Output                                       |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------- |
 | **1. Extract**   | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json`                  |
-| **2. Capture**   | Agent captures webp screenshot & fetches logo, validate   | local logo & screenshot, validation check    |
+| **2. Capture**   | Agent fetches logo (svg/webp/png/jpg/ico) & WebP screenshot, validate | local logo & screenshot, validation check    |
 | **3. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **4. Submit**    | Merge, final validate, upload assets, POST                | `submit.bundle.json`, submission confirmed   |
 
@@ -124,7 +124,7 @@ This is the final stage to package, validate, authenticate, and submit the site 
 **Authentication**:
 Before submitting, you must authenticate. If not already authenticated, perform login at this step. See [references/04-submit.md](references/04-submit.md) for authentication choices.
 
-For the exact CLI commands, validation workflow, and automatic WebP assets conversion rules, refer entirely to **[references/04-submit.md](references/04-submit.md)**.
+For the exact CLI commands, validation workflow, and asset size/format rules (logo: multi-format; screenshot: WebP only), refer entirely to **[references/04-submit.md](references/04-submit.md)**.
 
 ---
 

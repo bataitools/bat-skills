@@ -6,14 +6,16 @@ Once Step 1 text files are ready, the AI Agent must acquire the tool's logo and 
 
 ## 2.1 Retrieve Assets using `bat-cli` (Automated & Low-dependency)
 
-The `bat-cli` provides native commands to download logos and capture website screenshots. These commands automatically manage headless browsers, dimensions, WebP conversion, and size compression.
+The `bat-cli` provides native commands to download logos and capture website screenshots. Logo handling supports multiple image formats; screenshot capture outputs WebP only.
 
 ### 1. Logo Retrieval
-Run the following command to download the remote logo (e.g. from favicon or Organization JSON-LD Organization.logo extracted in Step 1) and automatically compress it to WebP format under 20KB:
+Run the following command to download the remote logo (e.g. from favicon or Organization JSON-LD `Organization.logo` extracted in Step 1) and optimize it (target under 20KB):
 ```bash
 bat-cli fetch-logo --url <logo-url> --dir <submit-dir>
 ```
-*Note: If the logo exceeds size limits or is in a non-WebP/non-SVG format, the CLI will automatically optimize and compress it into `<submit-dir>/logo.webp`.*
+**Supported local logo formats:** `svg`, `webp`, `ico`, `png`, `jpg` / `jpeg` — **WebP is not required.** Logos under 20KB or SVG logos under 50KB are kept as-is; other formats over 20KB may be auto-compressed to `logo.webp` when optimization is needed.
+
+*Note: Hard limit at pack/submit time is **50KB**. Prefer under 20KB.*
 
 ### 2. Website Screenshot Capture
 Run the following command to automatically launch a local headless browser, capture a 1080p screenshot of the site, and compress it to a WebP file under 100KB:
@@ -45,7 +47,7 @@ Before stopping Step 2, verify:
 - [ ] `pricingUrl` and `docsUrl` are extracted in `base.json`
 - [ ] `social` has all 8 keys
 - [ ] `social.email` is a valid public email, or left as `""` (empty string) if truly unavailable
-- [ ] Local logo file (`logo.webp`, `logo.svg`, etc.) exists in `<submit-dir>` and is **under 50KB** (preferably under 20KB)
+- [ ] Local logo file exists in `<submit-dir>` as `logo.svg`, `logo.webp`, `logo.ico`, `logo.png`, or `logo.jpg` — **under 50KB** (preferably under 20KB); WebP is optional
 - [ ] Local screenshot file `website-screenshot.webp` exists in `<submit-dir>`, is in **WebP format**, and is **under 200KB** (preferably under 100KB)
 - [ ] Each `pricing[]` item has only `name`, `chargeType`, `priceNote`, `features`, `recommend`
 - [ ] `chargeType` is one of: `free`, `recurring`, `flat`, `contact`

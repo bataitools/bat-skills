@@ -45,8 +45,8 @@ bat-cli submit --dir <submit-dir>
 
 At `pack` or `submit --dir`, the CLI handles the upload of local assets with strict validation rules:
 
-- **Strict Size Check**:
-  - **Logo**: Must be **under 50KB**. File size exceeding 50KB will reject packing/submission.
+- **Strict Asset Rules**:
+  - **Logo**: Must be **under 50KB**. Accepted formats: `svg`, `webp`, `ico`, `png`, `jpg` / `jpeg` — **WebP is not required**. The CLI may auto-compress oversized logos (>20KB) to `logo.webp` before upload; logos under 20KB or SVG logos under the size limit (50KB) are kept as-is.
   - **Website Screenshot**: Must be **under 200KB** and **strictly in WebP format** (`website-screenshot.webp`). Any size or format violations will abort packing/submission.
 - **Upload Trigger**: If `base.json` has no remote asset URLs (i.e. `logo` and `websiteScreenshot` are empty or omitted), the CLI automatically uploads the local logo and website screenshot to the platform's CDN, and then writes the generated remote URLs back to `base.json`.
 - **Skipping Remote Assets**: If `base.json` already contains remote `https://...` URLs for `logo` or `websiteScreenshot`, the CLI will skip uploading local files.
