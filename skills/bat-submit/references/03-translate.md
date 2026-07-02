@@ -20,9 +20,21 @@ Run `bat-cli schema en` to fetch the current list from the API.
 
 ---
 
-## 3.2 Recommended batching (stability)
+## 3.2 Strict Batching Constraint (Mandatory)
 
-Please strictly follow the 7-batch **Execution Order** defined in `SKILL.md` to translate languages in groups of 3–4. Do not translate all 27 languages in a single session to prevent LLM context truncation or output loss.
+> [!WARNING]
+> **[Strict Hard Constraint] You are STRICTLY PROHIBITED from processing all or a large number of languages at once!**
+> - **The number of languages processed in a single run must NEVER exceed 4.** You must only translate and write 2 to 4 languages' localization files at a time.
+> - **You are STRICTLY FORBIDDEN from asking the LLM to translate and output 5 or more languages in a single Prompt.** Doing so highly likely causes LLM output truncation, missing keys, or syntax errors.
+> - **You are STRICTLY PROHIBITED from writing or using automated scripts (Python/Node) that process more than 4 languages in one execution.** If you use an automated script, it must enforce batching internally (maximum of 4 languages per batch) with file writes and self-checks executed between each batch.
+> - Strictly follow the 7-batch execution order defined in `SKILL.md`. Process one batch at a time, ensuring that the current batch of files is successfully saved locally before starting the next:
+>   1. `zh`, `tw`, `ja`, `ko`
+>   2. `de`, `fr`, `it`, `nl`
+>   3. `es`, `pt`, `vi`, `id`
+>   4. `ru`, `pl`, `uk`, `tr`
+>   5. `ar`, `he`, `fa`, `ur`
+>   6. `hi`, `bn`, `th`
+>   7. `sv`, `no`, `da`, `fi`
 
 ---
 

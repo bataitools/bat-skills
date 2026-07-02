@@ -43,6 +43,10 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | **3. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **4. Submit**    | Merge, final validate, upload assets, POST                | `submit.bundle.json`, submission confirmed   |
 
+> [!WARNING]
+> **[Strict Hard Constraint] You are STRICTLY FORBIDDEN from translating more than 4 languages in a single Prompt! Running scripts (such as Python scripts) to batch-request or process more than 4 languages at once is also strictly prohibited.**
+> You are only allowed to translate 2 to 4 languages at a time. You must strictly process them in batches, and you must verify that the current batch is successfully written to local files before proceeding to the next batch.
+
 ---
 
 ## Per-site directory isolation (mandatory)
@@ -94,16 +98,22 @@ Read **only** the English `i18n/en.json` to localize into the other 27 target la
 
 For the natural localization rules, priceNote translation guidelines, and diff merge logic, refer entirely to **[references/03-translate.md](references/03-translate.md)**.
 
-**Execution Order & Self-Check**:
-Translate and save the files in batches of 3–4 languages in the following order. After writing each batch, immediately verify the corresponding JSON files for syntax and structure validity before moving to the next batch:
+> [!IMPORTANT]
+> **[Strict Translation Batching Constraint]**
+> - **You are STRICTLY FORBIDDEN from processing more than 4 languages at once.** The number of languages processed per session (single prompt, single API request, or a single run cycle of a script) **must be restricted to 2–4**. Do NOT attempt to merge batches or translate all 27 languages at once.
+> - **Do NOT write or execute any automation scripts** that attempt to translate 5 or more languages in a single run.
+> - You must complete one batch (2–4 languages), successfully write the generated files (e.g., `i18n/zh.json`, `i18n/ja.json`) to the local directory, and verify their correctness before starting the next batch.
 
-1.  `zh`, `tw`, `ja`, `ko`
-2.  `de`, `fr`, `it`, `nl`
-3.  `es`, `pt`, `vi`, `id`
-4.  `ru`, `pl`, `uk`, `tr`
-5.  `ar`, `he`, `fa`, `ur`
-6.  `hi`, `bn`, `th`
-7.  `sv`, `no`, `da`, `fi`
+**Execution Order & Self-Check**:
+Strictly follow the order below to translate and save files in batches (maximum of 4 languages per batch). After writing each batch, immediately verify the corresponding JSON files for syntax and structural validity before moving to the next batch:
+
+1.  `zh`, `tw`, `ja`, `ko` (Batch 1: Max 4 languages)
+2.  `de`, `fr`, `it`, `nl` (Batch 2: Max 4 languages)
+3.  `es`, `pt`, `vi`, `id` (Batch 3: Max 4 languages)
+4.  `ru`, `pl`, `uk`, `tr` (Batch 4: Max 4 languages)
+5.  `ar`, `he`, `fa`, `ur` (Batch 5: Max 4 languages)
+6.  `hi`, `bn`, `th`         (Batch 6: Max 3 languages)
+7.  `sv`, `no`, `da`, `fi` (Batch 7: Max 4 languages)
 
 ---
 
