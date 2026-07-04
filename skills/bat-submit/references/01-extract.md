@@ -32,7 +32,6 @@ Do **not** stop at the homepage. Visit and inspect (fetch HTML, follow nav/foote
 | **Pricing**            | `pricingUrl` (in `base.json`)                                             | `/pricing`, `/plans`, `/price`, footer "Pricing"                                                                                                                                                            |
 | **About / Docs**       | `docsUrl` (in `base.json`)                                                | `/docs`, `/documents`, `/about`, `/about-us`, `/company`, `/team`                                                                                                                                           |
 | **Contact / email**    | `social.email`                                                            | Footer, `/contact`, `mailto:` links, privacy/terms pages                                                                                                                                                    |
-| **Logo**               | Find remote logo URL                                                      | Find URL from `<link rel="icon">`, header logo `src`, JSON-LD `Organization.logo`, or `og:image` (prefer square logo over OG banner). (Keep this URL handy for Step 2)                                        |
 | **Social profiles**    | `social.*` URLs                                                           | Footer icons, header, `/community`, press kit — see Social table below                                                                                                                                      |
 | **Product media**      | `productMedia`                                                            | Homepage hero, features page, embedded YouTube/Vimeo, demo GIFs                                                                                                                                             |
 | **Developer identity** | `developerType`, `developerCountry`, `developerProvince`, `developerName` | JSON-LD (`Organization`), About/Team, Privacy/Terms, Contact address, footer legal line, country-code TLD — see strict rules below                                                                          |
@@ -81,7 +80,7 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 }
 ```
 
-`logo` and `websiteScreenshot` in `base.json` are **omitted or left as `""` during Step 1**. Local files (to be grabbed in Step 2) upload automatically at `pack` / `submit` unless `base.json` already has remote `https://...` URLs.
+`logo` and `websiteScreenshot` in `base.json` are **omitted or left as `""`**. Both assets will be automatically captured on the server after submission.
 
 ### `productMedia` — gallery items (video + image)
 
@@ -450,6 +449,8 @@ Before ending Step 1, you must perform both manual and automated verification:
    ```
    *Note: This command only validates text fields in `base.json` and `i18n/en.json` (placeholder references will stand in for missing screenshots/logos during this step).*
 
+When `validate-phase1` passes, proceed directly to Step 2 (Translate) in the same session.
+
 **Fail-Fast Rule**:
-If `validate-phase1` fails (Exit Code != 0), **you must fix the errors in this step first**. Do **NOT** proceed to Step 2 (Capture) or any subsequent steps until `validate-phase1` passes successfully.
+If `validate-phase1` fails (Exit Code != 0), **you must fix the errors in this step first**. Do **NOT** proceed to Step 2 (Translate) or any subsequent steps until `validate-phase1` passes successfully.
 

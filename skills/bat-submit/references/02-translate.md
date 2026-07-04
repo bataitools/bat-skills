@@ -1,14 +1,12 @@
-# Step 3 — Translate from English
+# Step 2 — Translate from English
 
-**Prerequisite:** Step 1 (Extract) and Step 2 (Capture & Validate) completed successfully (`base.json` + `i18n/en.json` + local logo file (e.g. `logo.svg`, `logo.webp`, `logo.ico`, `logo.png`) and `website-screenshot.webp`, or remote URLs in `base.json`) and `bat-cli validate-phase1` passed.
+**Prerequisite:** Step 1 (Extract) completed successfully (`base.json` + `i18n/en.json` generated and `bat-cli validate-phase1` passed). Local logo and website screenshot files are no longer required (they are automatically processed by the server).
 
 Read **only** `<submit-dir>/i18n/en.json`. Translate text fields into other languages. Write **one file per language** under `<submit-dir>/i18n/`.
 
-Do **not** capture or upload screenshots per language — one website screenshot (local file or `websiteScreenshot` in `base.json`) is shared by all languages. Upload to CDN happens at `pack` / `submit`, not during translation.
-
 ---
 
-## 3.1 Target languages — all required (28 total)
+## 2.1 Target languages — all required (28 total)
 
 `en` plus:
 
@@ -20,7 +18,7 @@ Run `bat-cli schema en` to fetch the current list from the API.
 
 ---
 
-## 3.2 Strict Batching Constraint (Mandatory)
+## 2.2 Strict Batching Constraint (Mandatory)
 
 > [!WARNING]
 > **[Strict Hard Constraint] You are STRICTLY PROHIBITED from processing all or a large number of languages at once!**
@@ -38,7 +36,7 @@ Run `bat-cli schema en` to fetch the current list from the API.
 
 ---
 
-## 3.3 Localization — rewrite for the target language (not word-for-word)
+## 2.3 Localization — rewrite for the target language (not word-for-word)
 
 **Yes — natural localization reads better than literal translation.** Your job is to produce copy a native speaker would write on a product page in that language, not an English sentence with words swapped.
 
@@ -84,7 +82,7 @@ Keep the same **factual, plain** tone as `en.json`. Natural rewrite is encourage
 
 ---
 
-## 3.4 What to translate
+## 2.4 What to translate
 
 Translate all string text in:
 
@@ -123,7 +121,7 @@ Each `priceNote` must still be a non-empty string (max 100 chars).
 
 ---
 
-## 3.5 What NOT to translate or change
+## 2.5 What NOT to translate or change
 
 - JSON keys
 - Array lengths (must match `en.json` exactly)
@@ -132,6 +130,6 @@ Each `priceNote` must still be a non-empty string (max 100 chars).
 
 ---
 
-## 3.6 Output file structure
+## 2.6 Output file structure
 
-Each `i18n/<lang>.json` has the **same structure** as `i18n/en.json`, only with translated text. After completing all translations, proceed to Step 4 (Pack and Submit).
+Each `i18n/<lang>.json` has the **same structure** as `i18n/en.json`, only with translated text. After completing all translations, proceed to Step 3 (Pack and Submit).
