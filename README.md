@@ -1,61 +1,125 @@
 # BAT AI Tools — Agent Skills
 
-A collection of portable Agent Skills (instructions, workflows, and schemas) designed to teach AI coding agents (such as Claude Code, Cursor, GitHub Copilot, and Gemini) how to interact with the BAT AI Tools ecosystem.
+> **Tell your AI agent one sentence. Your tool gets listed on [bataitools.com](https://bataitools.com) in 28 languages — no web forms, no platform fees.**
 
-## Available Skills
+Portable [Agent Skills](https://skills.sh/) that teach AI coding agents (Cursor, Claude Code, Windsurf, Cline, and 14+ more) how to submit AI tools to the BAT directory via [`bat-cli`](https://www.npmjs.com/package/@bataitools/bat-cli).
 
-| Skill | Path | Description |
-| :--- | :--- | :--- |
-| **bat-submit** | [`skills/bat-submit/SKILL.md`](./skills/bat-submit/SKILL.md) | Guides the AI agent through the 4-step workflow (extract, assets, translate, and submit) to submit AI tools to [bataitools.com](https://bataitools.com) via `bat-cli`. |
+[![skills.sh](https://skills.sh/bataitools/bat-skills/bat-submit)](https://skills.sh/bataitools/bat-skills/bat-submit)
 
 ---
 
-## Installation
+## Available Skills
 
-You can install these skills directly into your local project environment using the community `skills` CLI or the official GitHub CLI.
+| Skill | Description |
+| :--- | :--- |
+| [**bat-submit**](./skills/bat-submit/SKILL.md) | 3-step workflow — extract metadata, translate into 28 languages, pack & submit to bataitools.com |
 
-### Option 1: Using `npx skills` (Recommended)
+---
 
-Run the following command in your project root to add the `bat-submit` skill:
+## Quick Start
+
+### 1. Install `bat-cli`
 
 ```bash
-npx skills add https://github.com/bataitools/bat-skills --skill bat-submit
+npm install -g @bataitools/bat-cli@latest
+# or
+bun add -g @bataitools/bat-cli@latest
 ```
 
-This will download the skill and place it in your local configuration directory (e.g., `.cursor/skills/` or similar depending on your agent), allowing your AI assistant to automatically reference it.
+### 2. Install the Skill
 
-To update installed skills to the latest version:
+```bash
+# Project scope
+npx skills add bataitools/bat-skills --skill bat-submit
+
+# Global — available in every project (recommended)
+npx skills add bataitools/bat-skills --skill bat-submit -g -y
+
+# Target specific editors at once
+npx skills add bataitools/bat-skills --skill bat-submit -g -y -a cursor,claude-code,codex,windsurf
+```
+
+### 3. Submit with one prompt
+
+Open your AI agent and say:
+
+```
+Submit https://your-product.com to BAT AI Tools
+```
+
+Or in Chinese:
+
+```
+提交 https://your-product.com 到 bataitools
+```
+
+The agent runs the full workflow automatically. First `bat-cli` use creates a guest device account — no sign-up required.
+
+---
+
+## What the Skill Does (3 Steps)
+
+| Step | Action | Output |
+| :--- | :--- | :--- |
+| **1. Extract** | Crawl the target site, fill English metadata | `base.json`, `i18n/en.json` |
+| **2. Translate** | Localize into 27 other languages (batched, 2–4 per round) | `i18n/*.json` (28 total) |
+| **3. Submit** | Pack, validate, authenticate, POST to BAT API | Submission queued for review |
+
+Logo and screenshots are resolved on the BAT server during submit — no local browser capture required.
+
+Typical review time: **~24 hours**. Live URL: `https://bataitools.com/tools/{slug}`
+
+---
+
+## Supported Agents
+
+Any editor that loads `SKILL.md` skills:
+
+Cursor · Claude Code · Windsurf · Cline · GitHub Copilot · Gemini CLI · Codex CLI · Continue · Roo Code · Antigravity · Kiro · VS Code · Zed · and more.
+
+Full list on the [submit page](https://bataitools.com/submit).
+
+---
+
+## Update Installed Skills
+
 ```bash
 npx skills update
 ```
 
-### Option 2: Manual Link / Copy
+---
 
-If you prefer manual setup, you can clone this repository and symlink or copy the desired skill directory to your project's AI config directory:
+## Manual Setup (Alternative)
 
 ```bash
-# E.g., for Cursor:
+git clone https://github.com/bataitools/bat-skills.git
 mkdir -p .cursor/skills
-ln -s /path/to/bat-skills/skills/bat-submit .cursor/skills/bat-submit
+cp -r bat-skills/skills/bat-submit .cursor/skills/bat-submit
 ```
 
 ---
 
-## How to Use
+## Releases
 
-Once the skill is installed in your project, it will be automatically loaded by your AI coding assistant (such as Cursor, Claude Code, Cline, or Gemini). You can trigger it in your chat using natural language.
+Tag a version to trigger CI packaging:
 
-### Triggering the Skill
+```bash
+git tag v1.x.x && git push origin v1.x.x
+```
 
-Simply ask your AI assistant to submit or list a website. For example:
-- *"Submit AI tool https://example.com to bataitools"*
-- *"提交 AI 工具 https://example.com 到 bataitools"*
-- *"Run bat-cli submit for https://example.com"*
+Skill zips are attached to [GitHub Releases](https://github.com/bataitools/bat-skills/releases).
 
-The AI agent will automatically detect the trigger, load the workflow defined in `SKILL.md`, and execute the 4-step process (extract metadata, capture assets, translate, and package submit) autonomously.
+---
+
+## Links
+
+- **Directory:** [bataitools.com](https://bataitools.com)
+- **Submit guide:** [bataitools.com/submit](https://bataitools.com/submit)
+- **skills.sh listing:** [skills.sh/bataitools/bat-skills](https://skills.sh/bataitools/bat-skills)
+- **CLI package:** [@bataitools/bat-cli on npm](https://www.npmjs.com/package/@bataitools/bat-cli)
 
 ---
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE).
