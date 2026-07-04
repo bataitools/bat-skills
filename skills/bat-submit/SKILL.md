@@ -42,6 +42,8 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | **2. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **3. Submit**    | Merge, final validate, POST submit                        | `submit.bundle.json`, submission confirmed   |
 
+Logo and screenshots are **optional** at submit time. If omitted, the BAT server asynchronously enriches the published product via `bat-crawl` (fail-soft). You may still provide local assets before pack for faster listing.
+
 > [!WARNING]
 > **[Strict Hard Constraint] You are STRICTLY FORBIDDEN from translating more than 4 languages in a single Prompt! Running scripts (such as Python scripts) to batch-request or process more than 4 languages at once is also strictly prohibited.**
 > You are only allowed to translate 2 to 4 languages at a time. You must strictly process them in batches, and you must verify that the current batch is successfully written to local files before proceeding to the next batch.
@@ -112,7 +114,7 @@ This is the final stage to package, validate, authenticate, and submit the site 
 **Authentication**:
 Before submitting, you must authenticate. If not already authenticated, perform login at this step. See [references/03-submit.md](references/03-submit.md) for authentication choices.
 
-For the exact CLI commands, validation workflow, and asset handling rules (logo and screenshots are auto-captured on the server; local files optionally override), refer entirely to **[references/03-submit.md](references/03-submit.md)**.
+For the exact CLI commands, validation workflow, and optional asset handling (client upload vs server async enrichment), refer entirely to **[references/03-submit.md](references/03-submit.md)**.
 
 ---
 

@@ -19,7 +19,7 @@ You can run each sub-step individually or execute them in a single command.
 
 ### Option A: Manual Step-by-Step (Recommended for debugging)
 
-1. **Pack the directory** into a single bundle file (automatically resolves CDN assets from the server):
+1. **Pack the directory** into a single bundle file:
    ```bash
    bat-cli pack <submit-dir> -o <submit-dir>/submit.bundle.json
    ```
@@ -41,15 +41,17 @@ bat-cli submit --dir <submit-dir>
 
 ---
 
-## 3.3 Asset Handling & Server-side Capture
+## 3.3 Asset Handling (optional at submit)
 
-Because asset capture is offloaded to the server, local execution is fully automated:
+Logo and website screenshot are **optional** in the Agent submit bundle. The BAT server enriches missing assets asynchronously after the product is published:
 
-- **Server-side Auto-Capture (Default)**: If `base.json` contains no remote asset URLs and local asset files (`logo.*`, `website-screenshot.webp`) do not exist, `bat-cli` automatically requests the API to assign server-resolved CDN assets. The Bataitools server will asynchronously crawl the site, capture the screenshot, optimize the logo, and link them to the submission.
-- **Manual Override (Optional)**: If you need to enforce a custom logo or screenshot, you can manually place them in the `<submit-dir>` directory. `bat-cli` will detect and validate them during the `pack` command:
-  - **Logo**: Must be **under 50KB** (preferably under 20KB). Supported formats: `svg`, `webp`, `ico`, `png`, `jpg`/`jpeg`.
-  - **Screenshot**: Must be **under 200KB** and strictly in WebP format (`website-screenshot.webp`).
-  If these local files exist, they will be uploaded to the CDN, overriding any server-resolved assets.
+- **Client-provided assets (optional)**: If `logo` / `websiteScreenshot` remote URLs or local files exist in `<submit-dir>`, `bat-cli pack` uploads them to CDN and includes them in the bundle.
+- **Server async enrichment (default)**: If assets are omitted, after publish the worker calls `bat-crawl` to fetch logo + screenshot and fills empty product fields only. Failures do not block submission.
+- **Opera manual refresh**: Operators can preview crawl assets per product and apply to all 28 languages from the admin product drawer.
+
+Local override rules when you do provide files:
+- **Logo**: under 50KB (prefer under 20KB). Formats: `svg`, `webp`, `ico`, `png`, `jpg`/`jpeg`.
+- **Screenshot**: `website-screenshot.webp`, under 200KB, WebP only.
 
 ---
 
