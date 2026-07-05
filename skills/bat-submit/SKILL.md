@@ -39,7 +39,7 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | Step             | What happens                                              | Output                                       |
 | Step             | What you do                                               | Key output files                             |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------- |
-| **1. Extract**   | Crawl site, fill base.json + en.json + capture local assets | base.json, en.json, logo.webp, screenshot.webp |
+| **1. Extract**   | Crawl site, fill base.json (with logo URL) + en.json + capture screenshot | base.json, en.json, screenshot.png/webp |
 | **2. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **3. Submit**    | Merge, final validate, pack (uploads assets), POST submit | `submit.bundle.json`, submission confirmed   |
 
@@ -79,7 +79,7 @@ Initialize the directory, crawl the target website, and extract the English meta
 For the exact CLI commands, website crawl checklist, and comprehensive field guides (including taxonomy, social profiles, and developer identity rules), refer entirely to **[references/01-extract.md](references/01-extract.md)**.
 
 **Semantic Self-Check:**
-AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). **You must use your browser subagent to capture the screenshot and use local CLI commands to fetch the logo as documented to gather assets successfully.**
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). **You must use your browser subagent to capture the screenshot locally and write the remote logo URL directly to base.json as documented to gather assets successfully.**
 
 ---
 
