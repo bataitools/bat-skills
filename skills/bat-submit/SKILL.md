@@ -37,12 +37,13 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
 Large single-file JSON causes truncation and validation failures. Always run the 3 steps back-to-back:
 
 | Step             | What happens                                              | Output                                       |
+| Step             | What you do                                               | Key output files                             |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------- |
-| **1. Extract**   | Crawl site, fill `base.json` + `i18n/en.json` (no assets) | `base.json`, `i18n/en.json`                  |
+| **1. Extract**   | Crawl site, fill base.json + en.json + capture local assets | base.json, en.json, logo.webp, screenshot.webp |
 | **2. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
-| **3. Submit**    | Merge, final validate, POST submit                        | `submit.bundle.json`, submission confirmed   |
+| **3. Submit**    | Merge, final validate, pack (uploads assets), POST submit | `submit.bundle.json`, submission confirmed   |
 
-Logo and screenshots are **optional** at submit time. If omitted, the BAT server asynchronously enriches the published product via `bat-crawl` (fail-soft).
+Logo and screenshots are captured locally via the CLI to guarantee 100% success against firewalls. If they are completely impossible to capture, the server will fall back to asynchronous remote fetching (fail-soft).
 
 > [!WARNING]
 > **[Strict Hard Constraint] You are STRICTLY FORBIDDEN from translating more than 4 languages in a single Prompt! Running scripts (such as Python scripts) to batch-request or process more than 4 languages at once is also strictly prohibited.**
@@ -78,7 +79,7 @@ Initialize the directory, crawl the target website, and extract the English meta
 For the exact CLI commands, website crawl checklist, and comprehensive field guides (including taxonomy, social profiles, and developer identity rules), refer entirely to **[references/01-extract.md](references/01-extract.md)**.
 
 **Semantic Self-Check:**
-AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). Do not execute screenshot or logo retrieval tools.
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). **You must use your browser subagent to capture the screenshot and use local CLI commands to fetch the logo as documented to gather assets successfully.**
 
 ---
 

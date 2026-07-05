@@ -80,7 +80,25 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 }
 ```
 
-`logo` and `websiteScreenshot` in `base.json` are **omitted or left as `""`**. Both assets will be automatically captured on the server after submission.
+### 1.4 Local Asset Extraction (Logo & Screenshot) — MANDATORY FOR AGENTS
+
+To guarantee 100% success and bypass strict data-center WAF blocklists (like Vercel Security Checkpoints or Cloudflare Challenge screens), **you must extract and generate the Logo and Website Screenshot locally in Step 1** using your residential IP.
+
+Directly perform the following steps:
+
+1. **Capture Website Screenshot (Using Agent browser capability)**:
+   You **must** use your native browser agent tool (`browser_subagent`) to visit the target website. Wait for the page to render fully, dismiss any annoying Cookie consent pop-ups or advertising overlays, and capture a clean screenshot of the viewport. Save this image directly to the site folder as `<submit-dir>/screenshot.png` (or `.webp`/`.jpg`).
+
+2. **Download & Process Logo (Using CLI)**:
+   Inspect the website HTML to find its Favicon/Logo absolute link (e.g., `<link rel="icon">`, `<link rel="apple-touch-icon">`, or fallback `/favicon.ico`), then run:
+   ```bash
+   bat-cli fetch-logo --url <logo-source-url> --dir <submit-dir>
+   ```
+   This downloads and compresses the logo, saving it to `<submit-dir>/logo.webp`.
+
+*(Note: During Step 3, the `bat-cli pack` command will automatically upload these local assets to the R2 cloud storage and insert their URLs into the bundle JSON.)*
+
+---
 
 ### `productMedia` — gallery items (video + image)
 
