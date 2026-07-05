@@ -81,20 +81,11 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 }
 ```
 
-## 1.4 Local Asset Extraction (Logo & Screenshot)
+## 1.4 Logo extraction (remote URL only)
 
-To guarantee 100% success and bypass strict data-center WAF blocklists (like Vercel Security Checkpoints or Cloudflare Challenge screens), **you must extract and generate the Logo and Website Screenshot locally in Step 1** using your residential IP.
+Inspect the website HTML to find its absolute Favicon/Logo link (e.g., `<link rel="icon">`, `<link rel="apple-touch-icon">`, or fallback to `urlObj.origin + '/favicon.ico'`). **Directly write this absolute remote image URL into the `"logo"` field in `base.json`**. Do **NOT** download it locally or run `fetch-logo`.
 
-Directly perform the following steps:
-
-1. **Capture Website Screenshot (Using Agent browser capability)**:
-   You **must** use your native browser agent tool (`browser_subagent`) to visit the target website. **Configure your browser viewport resolution strictly to 1280x720 (standard widescreen ratio)**. Wait for the page to render fully, dismiss any annoying Cookie consent pop-ups or advertising overlays, and capture a clean screenshot.
-   * **Size & Format Constraints**: Save the screenshot as `<submit-dir>/screenshot.webp` (or highly compressed `.jpg`). **The file size must be strictly kept under 100 KB (ideally between 40 KB and 80 KB)** to ensure fast loading. If you get a heavy raw PNG, compress it (e.g., set WebP encoding quality to ~80%) before saving.
-
-2. **Extract & Save Logo (Directly Use Remote URL)**:
-   Inspect the website HTML to find its absolute Favicon/Logo link (e.g., `<link rel="icon">`, `<link rel="apple-touch-icon">`, or fallback to `urlObj.origin + '/favicon.ico'`). **Directly write this absolute remote image URL into the `"logo"` field in `base.json`**. Do **NOT** download it locally or run `fetch-logo`.
-
-*(Note: During Step 3, the `bat-cli pack` command will automatically upload the local screenshot asset to the R2 cloud storage and insert its URL along with the remote logo URL into the bundle JSON.)*
+**Website screenshot — do not capture in Step 1.** Do **not** use browser subagent, OS screen capture, or any local screenshot tool. Leave `websiteScreenshot` omitted from `base.json`; the BAT server enriches it asynchronously via `bat-crawl` after publish (fail-soft).
 
 ---
 
