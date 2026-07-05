@@ -81,9 +81,7 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 }
 ```
 
-### 1.4 Local Asset Extraction (Logo & Screenshot) — MANDATORY FOR AGENTS
-
-### 1.4 Local Asset Extraction (Logo & Screenshot) — MANDATORY FOR AGENTS
+## 1.4 Local Asset Extraction (Logo & Screenshot)
 
 To guarantee 100% success and bypass strict data-center WAF blocklists (like Vercel Security Checkpoints or Cloudflare Challenge screens), **you must extract and generate the Logo and Website Screenshot locally in Step 1** using your residential IP.
 
@@ -260,7 +258,7 @@ Only from **explicit** address or jurisdiction on site. May be `""`. Never guess
 
 ---
 
-## 1.4 `i18n/en.json` field guide
+## 1.5 `i18n/en.json` field guide
 
 ### Writing voice — extract first, minimal rewrite
 
@@ -455,7 +453,7 @@ Only include tiers that **actually exist** on the website — do not invent plan
 
 ---
 
-## 1.5 Semantic Self-Check
+## 1.6 Semantic Self-Check
 
 Before ending Step 1, you must perform both manual and automated verification:
 
