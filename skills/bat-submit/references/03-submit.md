@@ -41,17 +41,9 @@ bat-cli submit --dir <submit-dir>
 
 ---
 
-## 3.3 Asset Handling (optional at submit)
+## 3.3 Asset Handling
 
-Logo and website screenshot are **optional** in the Agent submit bundle. The BAT server enriches missing assets asynchronously after the product is published:
-
-- **Client-provided assets (optional)**: If `logo` / `websiteScreenshot` remote URLs or local files exist in `<submit-dir>`, `bat-cli pack` uploads them to CDN and includes them in the bundle.
-- **Server async enrichment (default)**: If assets are omitted, after publish the worker calls `bat-crawl` to fetch logo + screenshot and fills empty product fields only. Failures do not block submission.
-- **Opera manual refresh**: Operators can preview crawl assets per product and apply to all 28 languages from the admin product drawer.
-
-Local override rules when you do provide files:
-- **Logo**: under 50KB (prefer under 20KB). Formats: `svg`, `webp`, `ico`, `png`, `jpg`/`jpeg`.
-- **Screenshot**: `website-screenshot.webp`, under 200KB, WebP only.
+Logo and website screenshot are **optional** in the Agent submit bundle. The BAT server automatically enriches missing assets asynchronously after the product is published (via `bat-crawl`).
 
 ---
 
