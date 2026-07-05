@@ -27,14 +27,14 @@ bat-cli schema en
 
 Do **not** stop at the homepage. Visit and inspect (fetch HTML, follow nav/footer links):
 
-| Priority               | What to find                                                              | Where to look                                                                                                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pricing**            | `pricingUrl` (in `base.json`)                                             | `/pricing`, `/plans`, `/price`, footer "Pricing"                                                                                                                                                            |
-| **About / Docs**       | `docsUrl` (in `base.json`)                                                | `/docs`, `/documents`, `/about`, `/about-us`, `/company`, `/team`                                                                                                                                           |
-| **Contact / email**    | `social.email`                                                            | Footer, `/contact`, `mailto:` links, privacy/terms pages                                                                                                                                                    |
-| **Social profiles**    | `social.*` URLs                                                           | Footer icons, header, `/community`, press kit — see Social table below                                                                                                                                      |
-| **Product media**      | `productMedia`                                                            | Homepage hero, features page, embedded YouTube/Vimeo, demo GIFs                                                                                                                                             |
-| **Developer identity** | `developerType`, `developerCountry`, `developerProvince`, `developerName` | JSON-LD (`Organization`), About/Team, Privacy/Terms, Contact address, footer legal line, country-code TLD — see strict rules below                                                                          |
+| Priority               | What to find                                                              | Where to look                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Pricing**            | `pricingUrl` (in `base.json`)                                             | `/pricing`, `/plans`, `/price`, footer "Pricing"                                                                                   |
+| **About / Docs**       | `docsUrl` (in `base.json`)                                                | `/docs`, `/documents`, `/about`, `/about-us`, `/company`, `/team`                                                                  |
+| **Contact / email**    | `social.email`                                                            | Footer, `/contact`, `mailto:` links, privacy/terms pages                                                                           |
+| **Social profiles**    | `social.*` URLs                                                           | Footer icons, header, `/community`, press kit — see Social table below                                                             |
+| **Product media**      | `productMedia`                                                            | Homepage hero, features page, embedded YouTube/Vimeo, demo GIFs                                                                    |
+| **Developer identity** | `developerType`, `developerCountry`, `developerProvince`, `developerName` | JSON-LD (`Organization`), About/Team, Privacy/Terms, Contact address, footer legal line, country-code TLD — see strict rules below |
 
 If the site uses a client-rendered SPA, try direct path URLs above even when nav is JS-only.
 
@@ -85,18 +85,16 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 
 Inspect the website HTML to find its absolute Favicon/Logo link (e.g., `<link rel="icon">`, `<link rel="apple-touch-icon">`, or fallback to `urlObj.origin + '/favicon.ico'`). **Directly write this absolute remote image URL into the `"logo"` field in `base.json`**. Do **NOT** download it locally or run `fetch-logo`.
 
-**Website screenshot — do not capture in Step 1.** Do **not** use browser subagent, OS screen capture, or any local screenshot tool. Leave `websiteScreenshot` omitted from `base.json`; the BAT server enriches it asynchronously via `bat-crawl` after publish (fail-soft).
-
 ---
 
 ### `productMedia` — gallery items (video + image)
 
 Array of **0–10** promotional demos (homepage carousel, features page, embedded YouTube, product tour). **Not** the website screenshot.
 
-| `type`    | Fields (`url` is required) | Example                                                                                                                  |
-| --------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `type`    | Fields (`url` is required) | Example                                                                                                                            |
+| --------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | `"video"` | `url`, `thumbnail` (opt)   | `url`: YouTube watch URL / Direct `.mp4` URL<br>`thumbnail`: `https://img.youtube.com/...` (YouTube auto-derived or native poster) |
-| `"image"` | `url`                      | Direct image URL: `https://example.com/demo.png`                                                                         |
+| `"image"` | `url`                      | Direct image URL: `https://example.com/demo.png`                                                                                   |
 
 **Video example (YouTube — preferred when available):**
 
@@ -123,13 +121,14 @@ Backend auto-derives `videoId` and thumbnail from YouTube URLs. Do **not** use `
 #### 原生视频提取规范 (HTML5 Native Video)
 
 如果在提取页面内容时，页面包含了原生 `<video>` 播放器（例如 `<video class="native-video-player" src="..." poster="..." ...>` 或者是带有 `<source>` 的原生 HTML5 视频），请务必按以下规则提取：
+
 - **视频地址匹配**：提取 `<video>` 本身或子标签 `<source>` 中的 `src` 属性（或 `data-src` 延迟加载属性），作为 `productMedia` 中该项的 `url`。
 - **海报封面匹配**：提取 `<video>` 本身中的 `poster` 属性（或 `data-poster`），作为 `productMedia` 中该项的 `thumbnail`。
 - **链接规整绝对路径**：如果提取到的链接是相对路径，必须使用当前的网站 URL 进行拼接，保证其是合法的 `https://` 绝对路径。
 - **自动化提取工具**：您可以直接在终端运行本 Skill 下的 Python 辅助提取脚本来进行提取，它会自动规整为标准格式：
-  ```bash
-  python3 bat-skills/skills/bat-submit/scripts/extract_video.py <url_or_local_file_path> [base_url]
-  ```
+    ```bash
+    python3 bat-skills/skills/bat-submit/scripts/extract_video.py <url_or_local_file_path> [base_url]
+    ```
 
 **Image example (feature screenshot / demo slide):**
 
@@ -159,16 +158,16 @@ Use full `https://` URLs. If not found after searching → `""`.
 
 ### `social` — extract every profile you can find
 
-| Field       | Required                     | How to extract                                                                                 |
-| ----------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
-| `email`     | **Optional** | Public support/contact email from footer, contact page, or `mailto:`. If provided, it must be a valid email syntax. |
-| `twitter`   | Always present               | `twitter.com` / `x.com` profile URL                                                            |
-| `facebook`  | Always present               | Facebook page URL                                                                              |
-| `linkedin`  | Always present               | LinkedIn company or product URL                                                                |
-| `instagram` | Always present               | Instagram profile URL                                                                          |
-| `youtube`   | Always present               | YouTube channel or official video URL                                                          |
-| `tiktok`    | Always present               | TikTok profile URL                                                                             |
-| `github`    | Always present               | GitHub org/repo URL                                                                            |
+| Field       | Required       | How to extract                                                                                                      |
+| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `email`     | **Optional**   | Public support/contact email from footer, contact page, or `mailto:`. If provided, it must be a valid email syntax. |
+| `twitter`   | Always present | `twitter.com` / `x.com` profile URL                                                                                 |
+| `facebook`  | Always present | Facebook page URL                                                                                                   |
+| `linkedin`  | Always present | LinkedIn company or product URL                                                                                     |
+| `instagram` | Always present | Instagram profile URL                                                                                               |
+| `youtube`   | Always present | YouTube channel or official video URL                                                                               |
+| `tiktok`    | Always present | TikTok profile URL                                                                                                  |
+| `github`    | Always present | GitHub org/repo URL                                                                                                 |
 
 Use full `https://` URLs. If not found → `""`. **Never skip keys.**
 
@@ -451,13 +450,12 @@ Before ending Step 1, you must perform both manual and automated verification:
 
 1. **Manual Check**: Verify that all mandatory fields are fully filled, and taxonomy codes (`categorys`, `tags`, `audiences`) come strictly from the `code` field in `bat-cli schema en` (do **NOT** use numeric `id` or `slug` fields, and ensure their counts do not exceed limits: **10** for `categorys`, **10** for `audiences`, and **15** for `tags`).
 2. **Automated Verification**: **Run the validation command against the site directory:**
-   ```bash
-   bat-cli validate-phase1 <submit-dir>
-   ```
-   *Note: This command only validates text fields in `base.json` and `i18n/en.json` (placeholder references will stand in for missing screenshots/logos during this step).*
+    ```bash
+    bat-cli validate-phase1 <submit-dir>
+    ```
+    _Note: This command only validates text fields in `base.json` and `i18n/en.json` (placeholder references will stand in for missing screenshots/logos during this step)._
 
 When `validate-phase1` passes, proceed directly to Step 2 (Translate) in the same session.
 
 **Fail-Fast Rule**:
 If `validate-phase1` fails (Exit Code != 0), **you must fix the errors in this step first**. Do **NOT** proceed to Step 2 (Translate) or any subsequent steps until `validate-phase1` passes successfully.
-
