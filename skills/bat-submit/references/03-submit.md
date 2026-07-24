@@ -56,3 +56,17 @@ bat-cli status --id <submitId>
 ```
 
 The platform will review and process the bundle. Make sure to monitor this status until it is marked as processed or returns an error.
+
+---
+
+## 3.5 Troubleshooting & Failure Diagnostics
+
+If `bat-cli submit` fails (due to validation errors, API permissions, `NO_CHANGES_DETECTED`, etc.):
+
+1. `bat-cli` automatically writes a detailed error report to `<submit-dir>/last-error.json` (and appends to `<submit-dir>/error.log`).
+2. Run `bat-cli log <submit-dir>` to print formatted error diagnostics directly in the terminal:
+   ```bash
+   bat-cli log <submit-dir>
+   ```
+3. Coding Agents must inspect `<submit-dir>/last-error.json` or run `bat-cli log <submit-dir>` when a submission fails to read the exact error code, validation details, and recommended steps (`What to do`) for self-correction.
+
