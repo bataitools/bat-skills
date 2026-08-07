@@ -20,6 +20,8 @@ bat-cli schema en
 - Taxonomy codes (`categorys`, `tags`, `audiences`) **must** come strictly from the `code` field in `bat-cli schema en` output — never invent codes, and never use numeric `id` or `slug` fields.
 - **Taxonomy limits**: The maximum number of items allowed is: **10** for `categorys`, **10** for `audiences`, and **15** for `tags`. Select only the most relevant codes.
 - `website` must be the canonical product URL **without query parameters**.
+- `llmModel`: **Mandatory AI Model Identity**. Fill in your active LLM model name (e.g., `"gemini-3.6-flash"`, `"claude-3-5-sonnet"`, `"gpt-4o"`).
+
 
 ---
 

@@ -45,6 +45,11 @@ Large single-file JSON causes truncation and validation failures. Always run the
 
 Logo and screenshots are captured locally via the CLI to guarantee 100% success against firewalls. If they are completely impossible to capture, the server will fall back to asynchronous remote fetching (fail-soft).
 
+> [!IMPORTANT]
+> **[Mandatory AI Identity Declaration]**
+> When generating `base.json` (Step 1) and `submit.bundle.json` (Step 3), the AI Agent **MUST** include the `"llmModel"` field specifying its own active AI model identity name (e.g., `"gemini-3.6-flash"`, `"claude-3-5-sonnet"`, `"gpt-4o"`, `"deepseek-v3"`, etc.).
+
+
 > [!WARNING]
 > **[Strict Hard Constraint] You are STRICTLY FORBIDDEN from translating more than 4 languages in a single Prompt! Running scripts (such as Python scripts) to batch-request or process more than 4 languages at once is also strictly prohibited.**
 > You are only allowed to translate 2 to 4 languages at a time. You must strictly process them in batches, and you must verify that the current batch is successfully written to local files before proceeding to the next batch.
