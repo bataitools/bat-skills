@@ -5,6 +5,7 @@ import urllib.parse
 from html.parser import HTMLParser
 import json
 import os
+import re
 
 class VideoParser(HTMLParser):
     def __init__(self, base_url):
@@ -31,16 +32,51 @@ class VideoParser(HTMLParser):
             if src:
                 self.current_video['sources'].append(src)
                 self._add_video(src, self.current_video['poster'])
+        elif tag == 'iframe':
+            src = attrs_dict.get('src') or attrs_dict.get('data-src')
+            if src:
+                self._add_iframe_video(src)
 
     def handle_endtag(self, tag):
         if tag == 'video':
             self.current_video = None
 
+    def _add_iframe_video(self, src):
+        src_str = src.strip()
+        if not src_str:
+            return
+        
+        # YouTube embed check
+        yt_match = re.search(r'(?:youtube\.com|youtube-nocookie\.com)/embed/([a-zA-Z0-9_-]+)', src_str)
+        if yt_match:
+            video_id = yt_match.group(1)
+            video_url = f"https://www.youtube.com/watch?v={video_id}"
+            thumbnail_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+            self._append_unique_item(video_url, thumbnail_url)
+            return
+
+        # Vimeo embed check
+        vimeo_match = re.search(r'player\.vimeo\.com/video/(\d+)', src_str)
+        if vimeo_match:
+            video_id = vimeo_match.group(1)
+            video_url = f"https://vimeo.com/{video_id}"
+            self._append_unique_item(video_url, None)
+            return
+
     def _add_video(self, src, poster):
         src_str = src.strip()
         if not src_str or src_str.lower().startswith(('javascript:', 'blob:', 'data:')):
             return
-        
+
+        # Check if src is YouTube/Vimeo inside video tag
+        yt_match = re.search(r'(?:youtube\.com|youtube-nocookie\.com)/embed/([a-zA-Z0-9_-]+)', src_str)
+        if yt_match:
+            video_id = yt_match.group(1)
+            video_url = f"https://www.youtube.com/watch?v={video_id}"
+            thumbnail_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
+            self._append_unique_item(video_url, thumbnail_url)
+            return
+
         # 规整 URL 为绝对路径
         if self.base_url:
             video_url = urllib.parse.urljoin(self.base_url, src_str)
@@ -55,7 +91,10 @@ class VideoParser(HTMLParser):
                     thumbnail_url = urllib.parse.urljoin(self.base_url, poster_str)
                 else:
                     thumbnail_url = poster_str
-                
+
+        self._append_unique_item(video_url, thumbnail_url)
+
+    def _append_unique_item(self, video_url, thumbnail_url):
         # 去重
         for v in self.videos:
             if v['url'] == video_url:
@@ -115,3 +154,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

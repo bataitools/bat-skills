@@ -147,7 +147,7 @@ If the target page contains native `<video>` elements (e.g. `<video class="nativ
 - **Video URL extraction**: Extract the `src` attribute (or `data-src` lazy-loading attribute) from the `<video>` element itself or child `<source>` tags, and set it as the `url` field in `productMedia`.
 - **Poster image extraction**: Extract the `poster` attribute (or `data-poster` attribute) from the `<video>` element, and set it as the `thumbnail` field in `productMedia`.
 - **Normalize absolute URLs**: If the extracted URL is a relative path, resolve it against the site's base URL to ensure it is a valid `https://` absolute URL.
-- **Automated extraction script**: You can run the Python helper script provided in this Skill (`scripts/extract_video.py`) to extract video metadata automatically:
+- **Automated extraction script**: You can run the Python helper script provided in this Skill (`scripts/extract_video.py`) to extract video metadata automatically (supports native `<video>` tags and YouTube/Vimeo `iframe` embeds):
     ```bash
     python3 <skill-dir>/scripts/extract_video.py <url_or_local_file_path> [base_url]
     ```

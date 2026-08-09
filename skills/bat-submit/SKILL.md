@@ -42,7 +42,7 @@ Large single-file JSON causes truncation and validation failures. Always run the
 | **2. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **3. Submit**    | Merge, final validate, pack (uploads assets), POST submit | `submit.bundle.json`, submission confirmed   |
 
-Logo and screenshots are captured locally via the CLI to guarantee 100% success against firewalls. If they are completely impossible to capture, the server will fall back to asynchronous remote fetching (fail-soft).
+Logo is extracted as a direct remote URL in `base.json`. Website screenshots are optionally captured locally (via browser subagent or CLI); if omitted or failed, the server automatically enriches missing assets asynchronously after publication (fail-soft).
 
 > [!IMPORTANT]
 > **[Mandatory AI Identity Declaration]**
