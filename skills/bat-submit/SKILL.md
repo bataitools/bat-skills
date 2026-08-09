@@ -36,10 +36,9 @@ Submit or update an AI tool listing on [bataitools.com](https://bataitools.com) 
 
 Large single-file JSON causes truncation and validation failures. Always run the 3 steps back-to-back:
 
-| Step             | What happens                                              | Output                                       |
-| Step             | What you do                                               | Key output files                             |
+| Step | What happens | Key output files |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------- |
-| **1. Extract**   | Crawl site, fill base.json (with logo URL) + en.json + capture screenshot | base.json, en.json, screenshot.png/webp |
+| **1. Extract**   | Crawl site, fill base.json (with logo URL) + en.json + capture screenshot | base.json, en.json, website-screenshot.webp (or .png) |
 | **2. Translate** | Translate `en.json` into 27 other languages (batches)     | `i18n/zh.json`, `i18n/ja.json`, … (28 total) |
 | **3. Submit**    | Merge, final validate, pack (uploads assets), POST submit | `submit.bundle.json`, submission confirmed   |
 
@@ -84,7 +83,7 @@ Initialize the directory, crawl the target website, and extract the English meta
 For the exact CLI commands, website crawl checklist, and comprehensive field guides (including taxonomy, social profiles, and developer identity rules), refer entirely to **[references/01-extract.md](references/01-extract.md)**.
 
 **Semantic Self-Check:**
-AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). **You must use your browser subagent to capture the screenshot locally and write the remote logo URL directly to base.json as documented to gather assets successfully.**
+AI must self-check all written fields before proceeding. Ensure all mandatory fields (like pricing tiers, category tags) are fully filled and align with the rules in [references/01-extract.md](references/01-extract.md). **Optionally capture a website screenshot locally via Option A (browser subagent) or Option B (`bat-cli capture-screenshot`) as documented (skip if capture fails repeatedly), and write the remote logo URL directly to base.json.**
 
 ---
 

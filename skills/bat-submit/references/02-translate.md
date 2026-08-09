@@ -8,9 +8,9 @@ Read **only** `<submit-dir>/i18n/en.json`. Translate text fields into other lang
 
 ## 2.1 Target languages — all required (28 total)
 
-`en` plus:
+`en` plus (listed by translation batches below):
 
-`zh, tw, es, ar, id, pt, fr, ja, ru, de, ko, tr, vi, it, nl, pl, th, hi, uk, fa, bn, ur, sv, no, da, fi, he`
+`zh, tw, ja, ko, de, fr, it, nl, es, pt, vi, id, ru, pl, uk, tr, ar, he, fa, ur, hi, bn, th, sv, no, da, fi`
 
 **Every language above must be present** before `bat-cli validate` / `submit` will pass.
 

@@ -49,6 +49,7 @@ If the site uses a client-rendered SPA, try direct path URLs above even when nav
 ```json
 {
 	"website": "https://example.com",
+	"llmModel": "gemini-3.6-flash",
 	"logo": "https://example.com/favicon.ico",
 	"developerName": "",
 	"developerType": "",
@@ -89,7 +90,26 @@ Inspect the website HTML to find its absolute Favicon/Logo link (e.g., `<link re
 
 ---
 
-### `productMedia` — gallery items (video + image)
+## 1.5 Website Screenshot Capture (Optional)
+
+Capturing a website screenshot is **optional**. You can choose either of the following two options to capture the screenshot locally, or skip it completely:
+
+- **Option A (Browser Subagent)**: Use your browser subagent to navigate to the site, capture a 1080p desktop screenshot, and save it under `<submit-dir>/website-screenshot.webp` (preferred) or `<submit-dir>/website-screenshot.png`.
+- **Option B (`bat-cli` Command)**: Run the CLI command to automatically launch a local headless browser:
+  ```bash
+  bat-cli capture-screenshot --website <url> --dir <submit-dir>
+  ```
+
+### Screenshot Specifications (if captured):
+- **Output file path**: `<submit-dir>/website-screenshot.webp` (preferred) or `<submit-dir>/website-screenshot.png`
+- **Resolution / Dimensions**: 1080p desktop view (1920x1080)
+- **Optimization**: WebP format preferred (or PNG), compressed (preferably under 100KB)
+
+*Note: If screenshot capture fails repeatedly (e.g., after multiple retries due to browser launch errors, network timeouts, or site blocking), **skip screenshot capture and proceed** — missing screenshots will not block submission (the server will fall back to asynchronous remote fetching).*
+
+---
+
+## 1.6 `productMedia` — gallery items (video + image)
 
 Array of **0–10** promotional demos (homepage carousel, features page, embedded YouTube, product tour). **Not** the website screenshot.
 
@@ -120,16 +140,16 @@ Backend auto-derives `videoId` and thumbnail from YouTube URLs. Do **not** use `
 }
 ```
 
-#### 原生视频提取规范 (HTML5 Native Video)
+#### Native HTML5 Video Extraction Guidelines
 
-如果在提取页面内容时，页面包含了原生 `<video>` 播放器（例如 `<video class="native-video-player" src="..." poster="..." ...>` 或者是带有 `<source>` 的原生 HTML5 视频），请务必按以下规则提取：
+If the target page contains native `<video>` elements (e.g. `<video class="native-video-player" src="..." poster="..." ...>` or native HTML5 video with child `<source>` tags), strictly follow these rules when extracting media:
 
-- **视频地址匹配**：提取 `<video>` 本身或子标签 `<source>` 中的 `src` 属性（或 `data-src` 延迟加载属性），作为 `productMedia` 中该项的 `url`。
-- **海报封面匹配**：提取 `<video>` 本身中的 `poster` 属性（或 `data-poster`），作为 `productMedia` 中该项的 `thumbnail`。
-- **链接规整绝对路径**：如果提取到的链接是相对路径，必须使用当前的网站 URL 进行拼接，保证其是合法的 `https://` 绝对路径。
-- **自动化提取工具**：您可以直接在终端运行本 Skill 下的 Python 辅助提取脚本来进行提取，它会自动规整为标准格式：
+- **Video URL extraction**: Extract the `src` attribute (or `data-src` lazy-loading attribute) from the `<video>` element itself or child `<source>` tags, and set it as the `url` field in `productMedia`.
+- **Poster image extraction**: Extract the `poster` attribute (or `data-poster` attribute) from the `<video>` element, and set it as the `thumbnail` field in `productMedia`.
+- **Normalize absolute URLs**: If the extracted URL is a relative path, resolve it against the site's base URL to ensure it is a valid `https://` absolute URL.
+- **Automated extraction script**: You can run the Python helper script provided in this Skill (`scripts/extract_video.py`) to extract video metadata automatically:
     ```bash
-    python3 bat-skills/skills/bat-submit/scripts/extract_video.py <url_or_local_file_path> [base_url]
+    python3 <skill-dir>/scripts/extract_video.py <url_or_local_file_path> [base_url]
     ```
 
 **Image example (feature screenshot / demo slide):**
@@ -160,10 +180,10 @@ Use full `https://` URLs. If not found after searching → `""`.
 
 ### `social` — extract every profile you can find
 
-| Field       | Required       | How to extract                                                                                                      |
-| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `email`     | **Optional**   | Public support/contact email from footer, contact page, or `mailto:`. If provided, it must be a valid email syntax. |
-| `twitter`   | Always present | `twitter.com` / `x.com` profile URL                                                                                 |
+| Field       | Required                                 | How to extract                                                                                                                        |
+| ----------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `email`     | **Key required** (value optional: `""`)  | Public support/contact email from footer, contact page, or `mailto:`. If provided, must be valid syntax; if not found, use `""`.     |
+| `twitter`   | Always present                           | `twitter.com` / `x.com` profile URL                                                                                                   |
 | `facebook`  | Always present | Facebook page URL                                                                                                   |
 | `linkedin`  | Always present | LinkedIn company or product URL                                                                                     |
 | `instagram` | Always present | Instagram profile URL                                                                                               |
@@ -446,7 +466,7 @@ Only include tiers that **actually exist** on the website — do not invent plan
 
 ---
 
-## 1.6 Semantic Self-Check
+## 1.7 Semantic Self-Check
 
 Before ending Step 1, you must perform both manual and automated verification:
 
