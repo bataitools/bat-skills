@@ -4,7 +4,7 @@
 
 Portable [Agent Skills](https://skills.sh/) that teach AI coding agents (Cursor, Claude Code, Windsurf, Cline, and 14+ more) how to submit AI tools to the BAT directory via [`bat-cli`](https://www.npmjs.com/package/@bataitools/bat-cli).
 
-[![skills.sh](https://skills.sh/bataitools/bat-skills/bat-submit)](https://skills.sh/bataitools/bat-skills/bat-submit)
+[![skills.sh](https://skills.sh/b/bataitools/bat-skills)](https://skills.sh/bataitools/bat-skills/bat-submit)
 
 ---
 
